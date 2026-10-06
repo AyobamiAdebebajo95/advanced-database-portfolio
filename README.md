@@ -2,9 +2,9 @@
 
 MIVA Open University · Master of Information Technology · 2026/2027 First Semester
 
-## My Case Study: NaijaMart Online Store
+## My Case Study: NaijaAutoMart Online Store
 
-**What it is:** NaijaMart is a made-up Nigerian online store. Sellers list products, customers buy them online, and the items are delivered to their homes.
+**What it is:** NaijaAutoMart is a made-up Nigerian online store. Sellers list products, customers buy them online, and the items are delivered to their homes.
 
 **Who uses the database:**
 - Customers – browse products, place orders, pay, leave reviews
