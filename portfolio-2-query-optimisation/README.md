@@ -1,4 +1,4 @@
-# Portfolio 2: Making Queries Faster
+# Portfolio 2: Query Processing and Optimisation
 
 Coming soon.
 

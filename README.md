@@ -24,17 +24,18 @@ MIVA Open University · Master of Information Technology · 2026/2027 First Seme
 
 ## Portfolio Progress
 
-| Portfolio | Topic | Marks | Status |
+| Portfolio | Activity | Marks | Status |
 |---|---|---|---|
-| [1](portfolio-1-database-design/) | Database design | 7 | Not started |
-| [2](portfolio-2-query-optimisation/) | Making queries faster | 7 | Not started |
-| [3](portfolio-3-transactions-concurrency/) | Transactions | 7 | Not started |
-| [4](portfolio-4-nosql/) | NoSQL (MongoDB) | 7 | Not started |
-| [5](portfolio-5-distributed-cloud/) | Distributed and cloud databases | 6 | Not started |
-| [Docs](docs/) | Final write-up and reflection | 6 | Not started |
+| [Portfolio 1](portfolio-1-database-design/) | Database Design and Modelling | 7 | Not started |
+| [Portfolio 2](portfolio-2-query-optimisation/) | Query Processing and Optimisation | 7 | Not started |
+| [Portfolio 3](portfolio-3-transactions-concurrency/) | Transactions and Concurrency | 7 | Not started |
+| [Portfolio 4](portfolio-4-nosql/) | NoSQL and Advanced Data Models | 7 | Not started |
+| [Portfolio 5](portfolio-5-distributed-cloud/) | Distributed and Cloud Database Exercise | 6 | Not started |
+| [Final Documentation](docs/) | Portfolio documentation and technical reflection | 6 | Not started |
+| **Total** | | **40** | |
 
 ## Tools
 PostgreSQL, MongoDB, Docker, Python, draw.io
 
 ## Notes
-Each folder has its own README explaining what was done and how to run it. Sources are listed in [docs/references.md](docs/references.md) and AI use in [docs/ai-use-log.md](docs/ai-use-log.md).
+Each folder has its own README explaining what was done and how to run it. Setup steps are in [docs/setup-guide.md](docs/setup-guide.md). Sources are listed in [docs/references.md](docs/references.md) and AI use in [docs/ai-use-log.md](docs/ai-use-log.md).

@@ -1,4 +1,4 @@
-# Portfolio 5: Distributed and Cloud Databases
+# Portfolio 5: Distributed and Cloud Database Exercise
 
 Coming soon.
 

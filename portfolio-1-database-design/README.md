@@ -1,4 +1,4 @@
-# Portfolio 1: Database Design
+# Portfolio 1: Database Design and Modelling
 
 Coming soon.
 
