@@ -1,0 +1,127 @@
+erDiagram
+    CUSTOMER ||--o{ ORDERS : places
+    CUSTOMER ||--o{ INSPECTION : books
+    CUSTOMER ||--o{ REVIEW : writes
+    SELLER ||--o{ CAR_LISTING : "lists cars"
+    SELLER ||--o{ PART : "sells parts"
+    CAR_MODEL ||--o{ CAR_LISTING : "is the model of"
+    CAR_MODEL ||--o{ PART_FITMENT : "takes"
+    PART ||--o{ PART_FITMENT : "fits"
+    PART_CATEGORY ||--o{ PART : groups
+    CAR_LISTING ||--o{ INSPECTION : "is inspected in"
+    ORDERS ||--|{ ORDER_ITEM : contains
+    PART ||--o{ ORDER_ITEM : "is ordered in"
+    ORDERS ||--o{ PAYMENT : "is paid by"
+    ORDERS ||--o| DELIVERY : "is shipped by"
+    DELIVERY_AGENT |o--o{ DELIVERY : handles
+    PART ||--o{ REVIEW : receives
+
+    CUSTOMER {
+        int customer_id PK
+        varchar first_name
+        varchar last_name
+        varchar email UK
+        varchar phone UK
+        varchar city
+        varchar state
+        timestamp created_at
+    }
+    SELLER {
+        int seller_id PK
+        varchar business_name UK
+        varchar seller_type "Car Dealer or Parts Shop"
+        varchar email UK
+        varchar phone UK
+        varchar city
+        varchar state
+        boolean is_verified
+    }
+    DELIVERY_AGENT {
+        int agent_id PK
+        varchar full_name
+        varchar phone UK
+        varchar city
+    }
+    CAR_MODEL {
+        int model_id PK
+        varchar make "UK with model_name, model_year"
+        varchar model_name
+        smallint model_year
+    }
+    CAR_LISTING {
+        int listing_id PK
+        int seller_id FK
+        int model_id FK
+        char vin UK
+        varchar car_condition
+        int mileage_km
+        varchar colour
+        varchar transmission
+        numeric price
+        varchar status
+        timestamp listed_at
+    }
+    PART_CATEGORY {
+        int category_id PK
+        varchar category_name UK
+    }
+    PART {
+        int part_id PK
+        int seller_id FK
+        int category_id FK
+        varchar part_number "UK with seller_id"
+        varchar part_name
+        varchar brand
+        numeric price
+        int stock_qty
+    }
+    PART_FITMENT {
+        int part_id PK, FK
+        int model_id PK, FK
+    }
+    ORDERS {
+        int order_id PK
+        int customer_id FK
+        timestamp order_date
+        varchar status
+        varchar delivery_address
+        varchar delivery_city
+        varchar delivery_state
+    }
+    ORDER_ITEM {
+        int order_id PK, FK
+        int part_id PK, FK
+        int quantity
+        numeric unit_price
+    }
+    PAYMENT {
+        int payment_id PK
+        int order_id FK
+        numeric amount
+        varchar method
+        varchar status
+        timestamp paid_at
+    }
+    DELIVERY {
+        int delivery_id PK
+        int order_id FK, UK
+        int agent_id FK
+        varchar status
+        timestamp dispatched_at
+        timestamp delivered_at
+    }
+    INSPECTION {
+        int inspection_id PK
+        int customer_id FK
+        int listing_id FK
+        timestamp scheduled_for
+        varchar status
+    }
+    REVIEW {
+        int review_id PK
+        int customer_id FK
+        int part_id FK
+        smallint rating
+        text comment
+        timestamp created_at
+    }
