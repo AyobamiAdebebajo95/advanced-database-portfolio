@@ -15,7 +15,7 @@ When I ran Test 5, it didn't print PASSED on my PC. My PostgreSQL 18 reported th
 
 I also realised that when highlighting queries to run, it is better to highlight all parts of the query block and not leave any part unhighlighted, because the result would be an error.
 
-Also, always make sure to refresh your Postgres, to make sure things run concurrently and the most recent created or inserted tables are updated.
+Also, always make sure to refresh pgAdmin, so that the most recently created or inserted tables show up.
 
 **Looking ahead to query optimisation**
 For query optimisation, I am looking forward to running queries that would make the system work efficiently and return results faster.
