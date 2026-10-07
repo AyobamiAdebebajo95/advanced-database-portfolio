@@ -1,0 +1,104 @@
+-- Output of 04_check_queries.sql (PostgreSQL 16)
+SELECT 'customer' AS table_name, COUNT(*) AS rows FROM customer
+UNION ALL SELECT 'seller',         COUNT(*) FROM seller
+UNION ALL SELECT 'delivery_agent', COUNT(*) FROM delivery_agent
+UNION ALL SELECT 'car_model',      COUNT(*) FROM car_model
+UNION ALL SELECT 'car_listing',    COUNT(*) FROM car_listing
+UNION ALL SELECT 'part_category',  COUNT(*) FROM part_category
+UNION ALL SELECT 'part',           COUNT(*) FROM part
+UNION ALL SELECT 'part_fitment',   COUNT(*) FROM part_fitment
+UNION ALL SELECT 'orders',         COUNT(*) FROM orders
+UNION ALL SELECT 'order_item',     COUNT(*) FROM order_item
+UNION ALL SELECT 'payment',        COUNT(*) FROM payment
+UNION ALL SELECT 'delivery',       COUNT(*) FROM delivery
+UNION ALL SELECT 'inspection',     COUNT(*) FROM inspection
+UNION ALL SELECT 'review',         COUNT(*) FROM review;
+   table_name   | rows 
+----------------+------
+ customer       |   12
+ seller         |    6
+ delivery_agent |    4
+ car_model      |   10
+ car_listing    |    8
+ part_category  |    7
+ part           |   15
+ part_fitment   |   37
+ orders         |    8
+ order_item     |   12
+ payment        |    8
+ delivery       |    6
+ inspection     |    5
+ review         |    5
+(14 rows)
+
+SELECT p.part_name, p.brand, pc.category_name, p.price, p.stock_qty, s.business_name AS sold_by
+FROM car_model    m
+JOIN part_fitment f  ON f.model_id    = m.model_id
+JOIN part         p  ON p.part_id     = f.part_id
+JOIN part_category pc ON pc.category_id = p.category_id
+JOIN seller       s  ON s.seller_id   = p.seller_id
+WHERE m.make = 'Toyota' AND m.model_name = 'Corolla' AND m.model_year = 2015
+ORDER BY pc.category_name, p.price;
+         part_name         |  brand  | category_name |   price   | stock_qty |          sold_by          
+---------------------------+---------+---------------+-----------+-----------+---------------------------
+ Car Battery 75Ah          | Varta   | Batteries     |  95000.00 |        25 | Ladipo AutoParts Ventures
+ Front Brake Pads          | Toyota  | Brakes        |  38000.00 |        30 | Ladipo AutoParts Ventures
+ Oil Filter                | Toyota  | Filters       |   6500.00 |       120 | Ladipo AutoParts Ventures
+ Headlight Bulbs H4 (pair) | Philips | Lighting      |   9500.00 |       200 | Kano Auto Spares
+ Headlamp Assembly         | Depo    | Lighting      | 150000.00 |         6 | Nnewi Genuine Parts Ltd
+ Tyre 205/55 R16           | Dunlop  | Tyres         |  65000.00 |        40 | Ladipo AutoParts Ventures
+(6 rows)
+
+SELECT m.make, m.model_name, m.model_year, c.car_condition, c.mileage_km,
+       c.price, s.business_name AS dealer, s.city
+FROM car_listing c
+JOIN car_model m ON m.model_id  = c.model_id
+JOIN seller    s ON s.seller_id = c.seller_id
+WHERE c.status = 'Available'
+ORDER BY c.price;
+     make      | model_name | model_year | car_condition | mileage_km |    price    |      dealer       |     city      
+---------------+------------+------------+---------------+------------+-------------+-------------------+---------------
+ Kia           | Rio        |       2019 | Nigerian Used |      85000 |  6200000.00 | Garden City Cars  | Port Harcourt
+ Honda         | Accord     |       2017 | Foreign Used  |      75000 | 14500000.00 | Abuja Motor Hub   | Abuja
+ Toyota        | Camry      |       2018 | Foreign Used  |      68000 | 18500000.00 | Lekki Prime Autos | Lekki
+ Mercedes-Benz | C300       |       2017 | Foreign Used  |      60000 | 21000000.00 | Abuja Motor Hub   | Abuja
+ Hyundai       | Elantra    |       2020 | Brand New     |          0 | 26500000.00 | Garden City Cars  | Port Harcourt
+ Lexus         | ES 350     |       2019 | Foreign Used  |      40000 | 32000000.00 | Abuja Motor Hub   | Abuja
+(6 rows)
+
+SELECT o.order_id, cu.first_name || ' ' || cu.last_name AS customer, o.status,
+       COUNT(*)                         AS items,
+       SUM(oi.quantity * oi.unit_price) AS order_total,
+       d.status                         AS delivery_status
+FROM orders     o
+JOIN customer   cu ON cu.customer_id = o.customer_id
+JOIN order_item oi ON oi.order_id    = o.order_id
+LEFT JOIN delivery d ON d.order_id   = o.order_id
+GROUP BY o.order_id, cu.first_name, cu.last_name, o.status, d.status
+ORDER BY o.order_id;
+ order_id |    customer    |  status   | items | order_total | delivery_status 
+----------+----------------+-----------+-------+-------------+-----------------
+        1 | Chinedu Okafor | Delivered |     2 |    51000.00 | Delivered
+        2 | Aisha Bello    | Delivered |     1 |    95000.00 | Delivered
+        3 | Ibrahim Musa   | Delivered |     2 |    42000.00 | Delivered
+        4 | Emeka Nwosu    | Shipped   |     1 |   480000.00 | In Transit
+        5 | Funke Adebayo  | Paid      |     2 |   159500.00 | Awaiting Pickup
+        6 | Tunde Adeyemi  | Pending   |     1 |   260000.00 | 
+        7 | Ngozi Eze      | Cancelled |     1 |   170000.00 | 
+        8 | Kemi Oladipo   | Paid      |     2 |   147000.00 | Awaiting Pickup
+(8 rows)
+
+SELECT p.part_name, p.brand, COUNT(r.review_id) AS reviews, ROUND(AVG(r.rating), 1) AS avg_rating
+FROM part p
+JOIN review r ON r.part_id = p.part_id
+GROUP BY p.part_id, p.part_name, p.brand
+ORDER BY avg_rating DESC, p.part_name;
+       part_name        | brand  | reviews | avg_rating 
+------------------------+--------+---------+------------
+ Car Battery 75Ah       | Varta  |       1 |        5.0
+ Front Brake Pads       | Toyota |       1 |        5.0
+ Spark Plugs (set of 4) | NGK    |       1 |        5.0
+ Oil Filter             | Honda  |       1 |        4.0
+ Oil Filter             | Toyota |       1 |        4.0
+(5 rows)
+

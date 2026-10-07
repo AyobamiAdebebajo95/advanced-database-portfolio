@@ -1,0 +1,14 @@
+-- Output of 03_test_constraints.sql (PostgreSQL 16)
+
+NOTICE:  Test 1 PASSED (duplicate email blocked): duplicate key value violates unique constraint "customer_email_key"
+NOTICE:  Test 2 PASSED (negative stock blocked): new row for relation "part" violates check constraint "chk_stock"
+NOTICE:  Test 3 PASSED (rating 6 blocked): new row for relation "review" violates check constraint "chk_rating"
+NOTICE:  Test 4 PASSED (unknown customer blocked): insert or update on table "orders" violates foreign key constraint "orders_customer_id_fkey"
+NOTICE:  Test 5 PASSED (order history protected): update or delete on table "customer" violates foreign key constraint "orders_customer_id_fkey" on table "orders"
+NOTICE:  Test 6 PASSED (zero quantity blocked): new row for relation "order_item" violates check constraint "chk_quantity"
+NOTICE:  Test 7 PASSED (duplicate fitment blocked): duplicate key value violates unique constraint "part_fitment_pkey"
+NOTICE:  Test 8 PASSED (second delivery blocked): duplicate key value violates unique constraint "delivery_order_id_key"
+NOTICE:  Test 9 PASSED (invalid seller type blocked): new row for relation "seller" violates check constraint "chk_seller_type"
+NOTICE:  Test 10 PASSED (missing VIN blocked): null value in column "vin" of relation "car_listing" violates not-null constraint
+NOTICE:  Test 11 PASSED (impossible delivery date blocked): new row for relation "delivery" violates check constraint "chk_delivery_dates"
+NOTICE:  Test 12 PASSED (double booking blocked): duplicate key value violates unique constraint "uq_inspection_slot"

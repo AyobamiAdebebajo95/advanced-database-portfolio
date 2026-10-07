@@ -1,0 +1,88 @@
+-- Tables created by 01_create_tables.sql
+                                          List of relations
+ Schema |      Name      | Type  |  Owner   | Persistence | Access method |    S
+--------+----------------+-------+----------+-------------+---------------+-----
+ public | car_listing    | table | postgres | permanent   | heap          | 8192
+ public | car_model      | table | postgres | permanent   | heap          | 8192
+ public | customer       | table | postgres | permanent   | heap          | 8192
+ public | delivery       | table | postgres | permanent   | heap          | 8192
+ public | delivery_agent | table | postgres | permanent   | heap          | 8192
+ public | inspection     | table | postgres | permanent   | heap          | 8192
+ public | order_item     | table | postgres | permanent   | heap          | 8192
+ public | orders         | table | postgres | permanent   | heap          | 8192
+ public | part           | table | postgres | permanent   | heap          | 8192
+ public | part_category  | table | postgres | permanent   | heap          | 8192
+ public | part_fitment   | table | postgres | permanent   | heap          | 8192
+ public | payment        | table | postgres | permanent   | heap          | 8192
+ public | review         | table | postgres | permanent   | heap          | 16 k
+ public | seller         | table | postgres | permanent   | heap          | 8192
+(14 rows)
+
+-- All keys and constraints
+   table_name   |         constraint_name         | constraint_type |           columns            
+----------------+---------------------------------+-----------------+------------------------------
+ car_listing    | car_listing_pkey                | PRIMARY KEY     | listing_id
+ car_listing    | car_listing_model_id_fkey       | FOREIGN KEY     | model_id
+ car_listing    | car_listing_seller_id_fkey      | FOREIGN KEY     | seller_id
+ car_listing    | car_listing_vin_key             | UNIQUE          | vin
+ car_listing    | chk_car_condition               | CHECK           | 
+ car_listing    | chk_car_price                   | CHECK           | 
+ car_listing    | chk_car_status                  | CHECK           | 
+ car_listing    | chk_mileage                     | CHECK           | 
+ car_listing    | chk_transmission                | CHECK           | 
+ car_model      | car_model_pkey                  | PRIMARY KEY     | model_id
+ car_model      | uq_car_model                    | UNIQUE          | make, model_year, model_name
+ car_model      | chk_model_year                  | CHECK           | 
+ customer       | customer_pkey                   | PRIMARY KEY     | customer_id
+ customer       | customer_email_key              | UNIQUE          | email
+ customer       | customer_phone_key              | UNIQUE          | phone
+ customer       | chk_customer_email              | CHECK           | 
+ delivery       | delivery_pkey                   | PRIMARY KEY     | delivery_id
+ delivery       | delivery_agent_id_fkey          | FOREIGN KEY     | agent_id
+ delivery       | delivery_order_id_fkey          | FOREIGN KEY     | order_id
+ delivery       | delivery_order_id_key           | UNIQUE          | order_id
+ delivery       | chk_delivery_dates              | CHECK           | 
+ delivery       | chk_delivery_status             | CHECK           | 
+ delivery_agent | delivery_agent_pkey             | PRIMARY KEY     | agent_id
+ delivery_agent | delivery_agent_phone_key        | UNIQUE          | phone
+ inspection     | inspection_pkey                 | PRIMARY KEY     | inspection_id
+ inspection     | inspection_customer_id_fkey     | FOREIGN KEY     | customer_id
+ inspection     | inspection_listing_id_fkey      | FOREIGN KEY     | listing_id
+ inspection     | uq_inspection_slot              | UNIQUE          | scheduled_for, listing_id
+ inspection     | chk_inspection_status           | CHECK           | 
+ order_item     | order_item_pkey                 | PRIMARY KEY     | part_id, order_id
+ order_item     | order_item_order_id_fkey        | FOREIGN KEY     | order_id
+ order_item     | order_item_part_id_fkey         | FOREIGN KEY     | part_id
+ order_item     | chk_quantity                    | CHECK           | 
+ order_item     | chk_unit_price                  | CHECK           | 
+ orders         | orders_pkey                     | PRIMARY KEY     | order_id
+ orders         | orders_customer_id_fkey         | FOREIGN KEY     | customer_id
+ orders         | chk_order_status                | CHECK           | 
+ part           | part_pkey                       | PRIMARY KEY     | part_id
+ part           | part_category_id_fkey           | FOREIGN KEY     | category_id
+ part           | part_seller_id_fkey             | FOREIGN KEY     | seller_id
+ part           | uq_seller_part_number           | UNIQUE          | part_number, seller_id
+ part           | chk_part_price                  | CHECK           | 
+ part           | chk_stock                       | CHECK           | 
+ part_category  | part_category_pkey              | PRIMARY KEY     | category_id
+ part_category  | part_category_category_name_key | UNIQUE          | category_name
+ part_fitment   | part_fitment_pkey               | PRIMARY KEY     | part_id, model_id
+ part_fitment   | part_fitment_model_id_fkey      | FOREIGN KEY     | model_id
+ part_fitment   | part_fitment_part_id_fkey       | FOREIGN KEY     | part_id
+ payment        | payment_pkey                    | PRIMARY KEY     | payment_id
+ payment        | payment_order_id_fkey           | FOREIGN KEY     | order_id
+ payment        | chk_pay_amount                  | CHECK           | 
+ payment        | chk_pay_method                  | CHECK           | 
+ payment        | chk_pay_status                  | CHECK           | 
+ review         | review_pkey                     | PRIMARY KEY     | review_id
+ review         | review_customer_id_fkey         | FOREIGN KEY     | customer_id
+ review         | review_part_id_fkey             | FOREIGN KEY     | part_id
+ review         | uq_one_review_each              | UNIQUE          | customer_id, part_id
+ review         | chk_rating                      | CHECK           | 
+ seller         | seller_pkey                     | PRIMARY KEY     | seller_id
+ seller         | seller_business_name_key        | UNIQUE          | business_name
+ seller         | seller_email_key                | UNIQUE          | email
+ seller         | seller_phone_key                | UNIQUE          | phone
+ seller         | chk_seller_type                 | CHECK           | 
+(63 rows)
+
