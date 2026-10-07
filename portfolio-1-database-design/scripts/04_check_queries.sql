@@ -2,6 +2,7 @@
 -- NaijaAutoMart - Portfolio 1
 -- Script 04: Simple queries showing the design works
 -- Run AFTER scripts 01 and 02.
+-- Q1-Q5 = Query 1 to Query 5.
 -- =====================================================================
 
 -- Q1. How many rows are in each table?

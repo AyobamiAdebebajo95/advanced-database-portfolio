@@ -5,6 +5,7 @@
 -- "PASSED" means the bad data was rejected, as it should be.
 -- In pgAdmin, the results appear in the "Messages" tab.
 -- Run AFTER scripts 01 and 02.
+-- VIN = Vehicle Identification Number.
 -- =====================================================================
 
 -- Test 1: UNIQUE - two customers cannot share an email

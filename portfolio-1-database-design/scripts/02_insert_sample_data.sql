@@ -2,6 +2,13 @@
 -- NaijaAutoMart - Portfolio 1
 -- Script 02: Sample data (all names and businesses are made up)
 -- Run AFTER 01_create_tables.sql. Prices are in Naira.
+--
+-- Abbreviations in the data:
+--   FCT  = Federal Capital Territory (Abuja)
+--   VIN  = Vehicle Identification Number (17 characters)
+--   Ah   = Ampere-hour (battery size, e.g. 75Ah)
+--   R16  = Radial tyre for a 16-inch wheel rim (R18 = 18-inch)
+--   H4   = A standard headlight bulb type
 -- =====================================================================
 
 -- Customers --------------------------------------------------------

@@ -1,5 +1,7 @@
 # Normalisation: from an order form to clean tables
 
+*Abbreviations: UNF = Unnormalised Form, 1NF/2NF/3NF = First/Second/Third Normal Form, BCNF = Boyce-Codd Normal Form, PK = Primary Key, FK = Foreign Key. Full list: [abbreviations.md](../docs/abbreviations.md).*
+
 **Normalisation** means organising data so each fact is stored in **one place only**. That stops three problems:
 
 - **Update problem**: change a seller's phone number in one row but forget the others, and the data now disagrees with itself.
@@ -10,7 +12,7 @@ Below, a NaijaAutoMart parts order goes step by step from one messy record to th
 
 ---
 
-## Step 0: Unnormalised data (UNF)
+## Step 0: Unnormalised Form (UNF)
 
 This is how an order might look if typed into one spreadsheet row:
 
@@ -67,7 +69,7 @@ The key is (order_id, part_id). Check each column with **functional dependencies
 
 | Table | Transitive dependency found | Fix |
 |---|---|---|
-| ORDERS | order_id → customer_id → name, email, phone | Move customer details to **CUSTOMER**; keep only `customer_id` (FK) in ORDERS |
+| ORDERS | order_id → customer_id → name, email, phone | Move customer details to **CUSTOMER**; keep only `customer_id` as a Foreign Key (FK) in ORDERS |
 | PART | part_id → seller_id → seller name, phone | Move seller details to **SELLER**; keep `seller_id` (FK) |
 | PART | part_id → category_id → category_name | Move to **PART_CATEGORY**; keep `category_id` (FK) |
 
@@ -87,9 +89,9 @@ Now each fact lives in one place. If Ladipo AutoParts changes its phone number, 
 
 ---
 
-## Step 4: A quick check for BCNF
+## Step 4: A quick check for Boyce-Codd Normal Form (BCNF)
 
-**Boyce-Codd Normal Form (BCNF)** is a slightly stricter version of 3NF: every column that decides other columns must itself be a key. The design passes:
+**BCNF** is a slightly stricter version of 3NF: every column that decides other columns must itself be a key. The design passes:
 
 - In **CAR_MODEL**, (make, model_name, model_year) decides the row, and it is declared `UNIQUE`, so it is a candidate key.
 - In **PART**, (seller_id, part_number) decides the row, and it is declared `UNIQUE`.
@@ -102,6 +104,6 @@ Now each fact lives in one place. If Ladipo AutoParts changes its phone number, 
 | Choice | Why it is correct |
 |---|---|
 | `unit_price` is stored in ORDER_ITEM even though PART has `price` | Part prices change. An order must remember what the customer **actually paid** on that day. This is a historical fact, not a copy. |
-| The order **total is not stored** | It is calculated from the order items (see Query 4 in `04_check_queries.sql`), so it can never be wrong or out of date. |
+| The order **total is not stored** | It is calculated from the order items (see Query 4, Q4, in `04_check_queries.sql`), so it can never be wrong or out of date. |
 | ORDERS has its own delivery address, separate from the customer's city | A customer may live in Ikeja but have parts delivered to their office or mechanic. The address belongs to the order. |
 | `city` and `state` are both kept | City is typed in by users, and city names alone are not a reliable way to work out the state, so we do not treat city → state as a rule. A full address lookup table could be added later if needed. |

@@ -2,10 +2,12 @@
 
 This portfolio designs the relational database for **NaijaAutoMart**, a made-up Nigerian online store for cars and auto parts, and builds it in **PostgreSQL 16**.
 
+*Abbreviations are spelled out on first use. Full list: [abbreviations.md](../docs/abbreviations.md).*
+
 | Required by the brief | Where to find it |
 |---|---|
 | Chosen case study description | [Main README](../README.md#my-case-study-naijaautomart-online-store) and the summary below |
-| ER diagram | [er-diagram.png](er-diagram.png) (shown below) |
+| ER (Entity-Relationship) diagram | [er-diagram.png](er-diagram.png) (shown below) |
 | Relational schema | [Relational schema](#relational-schema) below, and [01_create_tables.sql](scripts/01_create_tables.sql) |
 | Keys | [Keys and constraints](#keys-and-constraints) below |
 | Constraints | [Keys and constraints](#keys-and-constraints), proved in [03_test_constraints.sql](scripts/03_test_constraints.sql) |
@@ -22,11 +24,11 @@ NaijaAutoMart connects **car dealers** and **auto parts shops** with **customers
 
 ---
 
-## ER diagram
+## ER (Entity-Relationship) diagram
 
 ![NaijaAutoMart ER diagram](er-diagram.png)
 
-*Crow's foot notation. PK = primary key, FK = foreign key, UK = unique. Source: [er-diagram.mmd](er-diagram.mmd). It can be edited at [mermaid.live](https://mermaid.live), or imported into draw.io under Arrange → Insert → Advanced → Mermaid.*
+*Crow's foot notation. PK = Primary Key, FK = Foreign Key, UK = Unique Key. Source: [er-diagram.mmd](er-diagram.mmd). It can be edited at [mermaid.live](https://mermaid.live), or imported into draw.io under Arrange → Insert → Advanced → Mermaid.*
 
 ### How to read the relationships
 
@@ -44,7 +46,7 @@ A relational database can't store many-to-many links directly, so each one gets 
 
 ## Relational schema
 
-PK = primary key, FK = foreign key (→ the table it points to)
+PK = Primary Key, FK = Foreign Key (→ the table it points to)
 
 1. **CUSTOMER** (customer_id PK, first_name, last_name, email, phone, city, state, created_at)
 2. **SELLER** (seller_id PK, business_name, seller_type, email, phone, city, state, is_verified)
@@ -67,9 +69,9 @@ PK = primary key, FK = foreign key (→ the table it points to)
 
 | Type | What it does | Examples in NaijaAutoMart |
 |---|---|---|
-| **Primary key** | Gives every row a unique ID | `customer_id`, `part_id`; composite `(order_id, part_id)` in ORDER_ITEM |
+| **Primary key** | Gives every row a unique ID (identifier) | `customer_id`, `part_id`; composite `(order_id, part_id)` in ORDER_ITEM |
 | **Foreign key** | Links to a real row in another table | An order's `customer_id` must exist in CUSTOMER |
-| **UNIQUE** | No duplicates allowed | Customer email and phone; car VIN; one review per customer per part; no double-booking a car inspection |
+| **UNIQUE** | No duplicates allowed | Customer email and phone; car VIN (Vehicle Identification Number); one review per customer per part; no double-booking a car inspection |
 | **NOT NULL** | Value must be filled in | Every car must have a VIN, price and condition |
 | **CHECK** | Value must follow a rule | Price > 0; stock ≥ 0; rating 1–5; seller type is "Car Dealer" or "Parts Shop" |
 | **DEFAULT** | Fills a value automatically | `order_date` = now; new orders start as 'Pending' |
@@ -104,7 +106,7 @@ Test 12 PASSED (double booking blocked)
 
 ## Normalisation
 
-The tables are in **Third Normal Form (3NF)** and also pass the **BCNF** check. [normalisation.md](normalisation.md) walks through a real order step by step, from one messy row through 1NF, 2NF and 3NF, and explains the design choices that look like repetition but are deliberate (such as keeping `unit_price` on each order item).
+The tables are in **Third Normal Form (3NF)** and also pass the **Boyce-Codd Normal Form (BCNF)** check. [normalisation.md](normalisation.md) walks through a real order step by step, from one messy row through First (1NF), Second (2NF) and Third Normal Form (3NF), and explains the design choices that look like repetition but are deliberate (such as keeping `unit_price` on each order item).
 
 ---
 
@@ -115,10 +117,10 @@ The tables are in **Third Normal Form (3NF)** and also pass the **BCNF** check. 
 
 | Order | Script | What it does |
 |---|---|---|
-| 1 | [01_create_tables.sql](scripts/01_create_tables.sql) | Creates the 14 tables (safe to re-run) |
+| 1 | [01_create_tables.sql](scripts/01_create_tables.sql) | Creates the 14 tables using SQL (Structured Query Language); safe to re-run |
 | 2 | [02_insert_sample_data.sql](scripts/02_insert_sample_data.sql) | Adds sample customers, sellers, cars, parts and orders |
 | 3 | [03_test_constraints.sql](scripts/03_test_constraints.sql) | Tests the rules; results appear in the **Messages** tab |
-| 4 | [04_check_queries.sql](scripts/04_check_queries.sql) | Five queries showing the design works |
+| 4 | [04_check_queries.sql](scripts/04_check_queries.sql) | Five queries (Q1–Q5) showing the design works |
 
 ## Evidence
 

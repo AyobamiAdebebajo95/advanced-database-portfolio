@@ -1,5 +1,7 @@
 # Advanced Database Systems Portfolio (MIT 8103)
 
+*MIT = Master of Information Technology. All abbreviations are explained in [docs/abbreviations.md](docs/abbreviations.md).*
+
 MIVA Open University · Master of Information Technology · 2026/2027 First Semester
 
 ## My Case Study: NaijaAutoMart Online Store
@@ -29,7 +31,7 @@ MIVA Open University · Master of Information Technology · 2026/2027 First Seme
 | [Portfolio 1](portfolio-1-database-design/) | Database Design and Modelling | 7 | Done |
 | [Portfolio 2](portfolio-2-query-optimisation/) | Query Processing and Optimisation | 7 | Not started |
 | [Portfolio 3](portfolio-3-transactions-concurrency/) | Transactions and Concurrency | 7 | Not started |
-| [Portfolio 4](portfolio-4-nosql/) | NoSQL and Advanced Data Models | 7 | Not started |
+| [Portfolio 4](portfolio-4-nosql/) | NoSQL (Not only SQL) and Advanced Data Models | 7 | Not started |
 | [Portfolio 5](portfolio-5-distributed-cloud/) | Distributed and Cloud Database Exercise | 6 | Not started |
 | [Final Documentation](docs/) | Portfolio documentation and technical reflection | 6 | Not started |
 | **Total** | | **40** | |
@@ -38,4 +40,4 @@ MIVA Open University · Master of Information Technology · 2026/2027 First Seme
 PostgreSQL, MongoDB, Docker, Python, draw.io
 
 ## Notes
-Each folder has its own README explaining what was done and how to run it. Setup steps are in [docs/setup-guide.md](docs/setup-guide.md). Sources are listed in [docs/references.md](docs/references.md) and AI use in [docs/ai-use-log.md](docs/ai-use-log.md).
+Each folder has its own README explaining what was done and how to run it. Setup steps are in [docs/setup-guide.md](docs/setup-guide.md). Sources are listed in [docs/references.md](docs/references.md) and AI (Artificial Intelligence) use in [docs/ai-use-log.md](docs/ai-use-log.md).

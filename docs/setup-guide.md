@@ -1,13 +1,15 @@
 # Setup Guide (Windows)
 
+*Abbreviations are explained in [abbreviations.md](abbreviations.md).*
+
 The tools needed for this portfolio, in the order you need them. Install the first five this week. Docker is only needed for Portfolio 5, so it can wait.
 
 | # | Tool | Needed for | When |
 |---|---|---|---|
 | 1 | Git | Saving work to GitHub | Now |
-| 2 | VS Code | Editing files | Now |
-| 3 | PostgreSQL + pgAdmin | Portfolios 1, 2, 3, 5 | Now |
-| 4 | draw.io | ER diagram | Now |
+| 2 | VS Code (Visual Studio Code) | Editing files | Now |
+| 3 | PostgreSQL + pgAdmin (PostgreSQL Administration tool) | Portfolios 1, 2, 3, 5 | Now |
+| 4 | draw.io | ER (Entity-Relationship) diagram | Now |
 | 5 | Python | Creating test data | Before Portfolio 2 |
 | 6 | MongoDB + Compass | Portfolio 4 | Before Portfolio 4 |
 | 7 | Docker Desktop | Portfolio 5 | Before Portfolio 5 |
@@ -25,7 +27,7 @@ git config --global user.name "Ayobami Adebajo"
 git config --global user.email "ayobamiadebajo@gmail.com"
 ```
 
-## 2. VS Code
+## 2. VS Code (Visual Studio Code)
 1. Download from **https://code.visualstudio.com**
 2. Install with the defaults. Tick **"Add to PATH"** if asked.
 
@@ -56,7 +58,7 @@ pip install faker psycopg2-binary pymongo
 
 ## 7. Docker Desktop (before Portfolio 5)
 1. Download from **https://www.docker.com/products/docker-desktop/**
-2. Install with the defaults (it uses WSL 2; let it install that if asked) and restart your PC.
+2. Install with the defaults (it uses WSL 2, the Windows Subsystem for Linux; let it install that if asked) and restart your PC (Personal Computer).
 3. Open Docker Desktop and wait until it says **Engine running**.
 
 ---

@@ -3,6 +3,10 @@
 -- Script 01: Create all tables with keys and constraints
 -- Database: PostgreSQL 16   |   Run on the database: naijaautomart
 -- Safe to re-run: it drops the old tables first.
+--
+-- Abbreviations: SQL = Structured Query Language, PK = Primary Key,
+-- FK = Foreign Key, VIN = Vehicle Identification Number.
+-- Full list: docs/abbreviations.md
 -- =====================================================================
 
 DROP TABLE IF EXISTS review, inspection, delivery, delivery_agent, payment,
@@ -67,7 +71,7 @@ CREATE TABLE car_listing (
     listing_id    SERIAL        PRIMARY KEY,
     seller_id     INT           NOT NULL REFERENCES seller(seller_id)   ON DELETE RESTRICT,
     model_id      INT           NOT NULL REFERENCES car_model(model_id) ON DELETE RESTRICT,
-    vin           CHAR(17)      NOT NULL UNIQUE,         -- every real car has a unique VIN
+    vin           CHAR(17)      NOT NULL UNIQUE,         -- VIN = Vehicle Identification Number, unique per car
     car_condition VARCHAR(20)   NOT NULL,
     mileage_km    INT           NOT NULL,
     colour        VARCHAR(20)   NOT NULL,
