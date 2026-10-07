@@ -128,7 +128,7 @@ All screenshots were taken in pgAdmin 4 on my own computer (PostgreSQL 18) on 7 
 
 ### 1. Tables created (script 01)
 
-![Tables listed in pgAdmin after running the create script](evidence/screenshots/01f_tables_in_pgadmin.png)
+![All 14 tables listed in pgAdmin](evidence/screenshots/01h_all_14_tables_in_pgadmin.png)
 
 | Screenshot | Shows |
 |---|---|
@@ -137,7 +137,7 @@ All screenshots were taken in pgAdmin 4 on my own computer (PostgreSQL 18) on 7 
 | [01c_create_delivery_table.png](evidence/screenshots/01c_create_delivery_table.png) | DELIVERY created; UNIQUE order_id makes it one-to-one |
 | [01d_create_inspection_table.png](evidence/screenshots/01d_create_inspection_table.png) | INSPECTION created with the no-double-booking UNIQUE rule |
 | [01e_create_review_table.png](evidence/screenshots/01e_create_review_table.png) | REVIEW created with rating 1–5 CHECK |
-| [01g_table_list_close_up.png](evidence/screenshots/01g_table_list_close_up.png) | Close-up of the table list in pgAdmin |
+| [01h_all_14_tables_in_pgadmin.png](evidence/screenshots/01h_all_14_tables_in_pgadmin.png) | pgAdmin showing all 14 tables, including INSPECTION and REVIEW |
 
 ### 2. Sample data loaded (script 02)
 
@@ -156,7 +156,7 @@ All screenshots were taken in pgAdmin 4 on my own computer (PostgreSQL 18) on 7 
 | 3 | CHECK: rating of 6 blocked | [03_test03](evidence/screenshots/03_test03_rating_6_blocked.png) |
 | 4 | FOREIGN KEY: order for unknown customer blocked | [03_test04](evidence/screenshots/03_test04_unknown_customer_blocked.png) |
 | 5 | ON DELETE RESTRICT: order history protected | [03_test05](evidence/screenshots/03_test05_order_history_protected.png) |
-| 6 | CHECK: zero quantity blocked | Shown in [03_constraint_test_results.txt](evidence/03_constraint_test_results.txt) |
+| 6 | CHECK: zero quantity blocked | [03_test06](evidence/screenshots/03_test06_zero_quantity_blocked.png) |
 | 7 | Composite PRIMARY KEY: duplicate fitment blocked | [03_test07](evidence/screenshots/03_test07_duplicate_fitment_blocked.png) |
 | 8 | UNIQUE (one-to-one): second delivery blocked | [03_test08](evidence/screenshots/03_test08_second_delivery_blocked.png) |
 | 9 | CHECK: invalid seller type blocked | [03_test09](evidence/screenshots/03_test09_invalid_seller_type_blocked.png) |
