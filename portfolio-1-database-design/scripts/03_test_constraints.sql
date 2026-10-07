@@ -45,7 +45,9 @@ END $$;
 DO $$ BEGIN
     DELETE FROM customer WHERE customer_id = 1;
     RAISE NOTICE 'Test 5 FAILED: customer with orders was deleted';
-EXCEPTION WHEN foreign_key_violation THEN
+-- Newer PostgreSQL versions report ON DELETE RESTRICT as restrict_violation (23001);
+-- older ones report foreign_key_violation (23503). Either one means the delete was blocked.
+EXCEPTION WHEN foreign_key_violation OR restrict_violation THEN
     RAISE NOTICE 'Test 5 PASSED (order history protected): %', SQLERRM;
 END $$;
 
