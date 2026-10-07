@@ -1,6 +1,6 @@
 # Portfolio 1: Database Design and Modelling
 
-This portfolio designs the relational database for **NaijaAutoMart**, a made-up Nigerian online store for cars and auto parts, and builds it in **PostgreSQL 16**.
+This portfolio designs the relational database for **NaijaAutoMart**, a made-up Nigerian online store for cars and auto parts, and builds it in **PostgreSQL**. It was run on my own computer in PostgreSQL 18 with pgAdmin 4, and re-checked on PostgreSQL 16.
 
 *Abbreviations are spelled out on first use. Full list: [abbreviations.md](../docs/abbreviations.md).*
 
@@ -124,9 +124,62 @@ The tables are in **Third Normal Form (3NF)** and also pass the **Boyce-Codd Nor
 
 ## Evidence
 
+All screenshots were taken in pgAdmin 4 on my own computer (PostgreSQL 18) on 7 October 2026.
+
+### 1. Tables created (script 01)
+
+![Tables listed in pgAdmin after running the create script](evidence/screenshots/01f_tables_in_pgadmin.png)
+
+| Screenshot | Shows |
+|---|---|
+| [01a_create_order_item_table.png](evidence/screenshots/01a_create_order_item_table.png) | ORDER_ITEM created with its composite primary key and CHECK rules |
+| [01b_create_payment_table.png](evidence/screenshots/01b_create_payment_table.png) | PAYMENT created with CHECK rules on amount, method and status |
+| [01c_create_delivery_table.png](evidence/screenshots/01c_create_delivery_table.png) | DELIVERY created; UNIQUE order_id makes it one-to-one |
+| [01d_create_inspection_table.png](evidence/screenshots/01d_create_inspection_table.png) | INSPECTION created with the no-double-booking UNIQUE rule |
+| [01e_create_review_table.png](evidence/screenshots/01e_create_review_table.png) | REVIEW created with rating 1–5 CHECK |
+| [01g_table_list_close_up.png](evidence/screenshots/01g_table_list_close_up.png) | Close-up of the table list in pgAdmin |
+
+### 2. Sample data loaded (script 02)
+
+| Screenshot | Shows |
+|---|---|
+| [02_insert_sample_data.png](evidence/screenshots/02_insert_sample_data.png) | Inspection bookings and reviews inserted successfully (`INSERT 0 5`) |
+
+### 3. Constraint tests (script 03)
+
+![Test 5: deleting a customer who has orders is blocked](evidence/screenshots/03_test05_order_history_protected.png)
+
+| Test | Rule tested | Screenshot |
+|---|---|---|
+| 1 | UNIQUE: duplicate email blocked | [03_test01](evidence/screenshots/03_test01_duplicate_email_blocked.png) |
+| 2 | CHECK: negative stock blocked | [03_test02](evidence/screenshots/03_test02_negative_stock_blocked.png) |
+| 3 | CHECK: rating of 6 blocked | [03_test03](evidence/screenshots/03_test03_rating_6_blocked.png) |
+| 4 | FOREIGN KEY: order for unknown customer blocked | [03_test04](evidence/screenshots/03_test04_unknown_customer_blocked.png) |
+| 5 | ON DELETE RESTRICT: order history protected | [03_test05](evidence/screenshots/03_test05_order_history_protected.png) |
+| 6 | CHECK: zero quantity blocked | Shown in [03_constraint_test_results.txt](evidence/03_constraint_test_results.txt) |
+| 7 | Composite PRIMARY KEY: duplicate fitment blocked | [03_test07](evidence/screenshots/03_test07_duplicate_fitment_blocked.png) |
+| 8 | UNIQUE (one-to-one): second delivery blocked | [03_test08](evidence/screenshots/03_test08_second_delivery_blocked.png) |
+| 9 | CHECK: invalid seller type blocked | [03_test09](evidence/screenshots/03_test09_invalid_seller_type_blocked.png) |
+| 10 | NOT NULL: missing VIN (Vehicle Identification Number) blocked | [03_test10](evidence/screenshots/03_test10_missing_vin_blocked.png) |
+| 11 | CHECK: delivered-before-dispatched blocked | [03_test11](evidence/screenshots/03_test11_impossible_delivery_date_blocked.png) |
+| 12 | UNIQUE: double-booked inspection blocked | [03_test12](evidence/screenshots/03_test12_double_booking_blocked.png) |
+
+### 4. Queries (script 04)
+
+![Q2: parts that fit a 2015 Toyota Corolla](evidence/screenshots/04_q2_parts_that_fit_corolla_2015.png)
+
+| Query | Shows | Screenshot |
+|---|---|---|
+| Q1 | Row count for every table | [04_q1_row_counts.png](evidence/screenshots/04_q1_row_counts.png) |
+| Q2 | Parts that fit a 2015 Toyota Corolla (uses the PART_FITMENT bridge table) | [04_q2_parts_that_fit_corolla_2015.png](evidence/screenshots/04_q2_parts_that_fit_corolla_2015.png) |
+| Q3 | Cars available for sale with dealer and city | [04_q3_available_cars.png](evidence/screenshots/04_q3_available_cars.png) |
+| Q4 | Order totals calculated from order items | [04_q4_order_summary.png](evidence/screenshots/04_q4_order_summary.png) |
+| Q5 | Average rating per part | [04_q5_part_ratings.png](evidence/screenshots/04_q5_part_ratings.png) |
+
+### Text outputs
+
 | File | Shows |
 |---|---|
 | [01_tables_and_constraints.txt](evidence/01_tables_and_constraints.txt) | All 14 tables and every key and constraint, listed by PostgreSQL |
-| [03_constraint_test_results.txt](evidence/03_constraint_test_results.txt) | All 12 constraint tests passing |
-| [04_query_results.txt](evidence/04_query_results.txt) | Query results, e.g. "Which parts fit my 2015 Toyota Corolla?" |
-| Screenshots (`evidence/*.png`) | pgAdmin screenshots of the same, taken on my own machine |
+| [03_constraint_test_results.txt](evidence/03_constraint_test_results.txt) | All 12 constraint tests passing in one run |
+| [04_query_results.txt](evidence/04_query_results.txt) | Full results of Q1–Q5 |
