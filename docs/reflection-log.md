@@ -8,7 +8,7 @@ One short entry each week: what I decided, what went wrong, and what I learned.
 I chose a cars and auto parts store (an online e-commerce store) because I have a soft spot for cars, and they make transportation easier in busy urban cities. Creating a database system for them allows car enthusiasts ease of navigation and could make the world better.
 
 **Design decisions?**
-The reason I gave more explicit direction to the design with regard to model fits, part fits and more is to dive deep into product fit and ease of use for the customers: what they truly need, and what level of ease I can give them when purchasing parts or cars.
+The reason I gave more explicit direction to the design with regard to model fits, part fits and more is to dive deep into product fit and ease of use for the customers: what they truly need, and what level of ease I can give them when purchasing vehicle parts or cars.
 
 **Problems I faced and what I learned?**
 When I ran Test 5, it didn't print PASSED on my PC. My PostgreSQL 18 reported the blocked delete as `restrict_violation` (23001), but the test only expected `foreign_key_violation` (23503). I was a bit confused about why that test script failed, but I was able to realise that different database versions behave differently based on which conditions have been set for certain queries to fly.
