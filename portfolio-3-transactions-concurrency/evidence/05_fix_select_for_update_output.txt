@@ -1,0 +1,63 @@
+Output of 05_fix_select_for_update.sql  (two connections = Tab A and Tab B, run step by step)
+Run on PostgreSQL test server, 2026-10-12
+
+[t+  0.0s] SETUP - TAB A: reset: 1 headlamp left, remove old demo orders
+  > DELETE FROM order_item WHERE order_id IN (SELECT order_id FROM orders WHERE delivery_address LIKE 'P3 demo%');
+    DELETE 2
+  > DELETE FROM orders WHERE delivery_address LIKE 'P3 demo%';
+    DELETE 2
+  > UPDATE part SET stock_qty = 1 WHERE part_id = 10;
+    UPDATE 1
+  > SELECT part_id, part_name, stock_qty FROM part WHERE part_id = 10;
+    part_id | part_name         | stock_qty
+    --------+-------------------+----------
+    10      | Headlamp Assembly | 1        
+    (1 row)
+
+[t+  0.3s] STEP 1 - TAB A: Chinedu's app reads AND LOCKS the row (sees 1)
+  > BEGIN;
+    BEGIN
+  > SELECT stock_qty FROM part WHERE part_id = 10 FOR UPDATE;
+    stock_qty
+    ---------
+    1        
+    (1 row)
+
+[t+  0.6s] STEP 2 - TAB B: Aisha's app tries to read and lock the same row. It WAITS.
+    ... WAITING (blocked by a lock held by the other tab) ...
+
+[t+  3.4s] STEP 3 - TAB A: Chinedu buys it and commits. This releases the lock.
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 10;
+    UPDATE 1
+  > INSERT INTO orders (customer_id, status, delivery_address, delivery_city, delivery_state) VALUES (1, 'Paid', '...
+    INSERT 0 1
+  > INSERT INTO order_item (order_id, part_id, quantity, unit_price) VALUES (currval('orders_order_id_seq'), 10, 1...
+    INSERT 0 1
+  > COMMIT;
+    COMMIT
+
+[t+  3.7s] STEP 2 - TAB B has now FINISHED (it was waiting):
+  > BEGIN;
+    BEGIN
+  > SELECT stock_qty FROM part WHERE part_id = 10 FOR UPDATE;
+    stock_qty
+    ---------
+    0        
+    (1 row)
+
+[t+  3.7s] STEP 4 - TAB B: Aisha's STEP 2 has now finished and shows 0. Her app says "Sold out" and cancels.
+  > ROLLBACK;
+    ROLLBACK
+
+[t+  4.0s] CHECK - TAB A: only ONE headlamp sold, stock is 0. No overselling.
+  > SELECT c.first_name AS customer, oi.quantity, o.delivery_address FROM orders o JOIN order_item oi ON oi.order_...
+    customer | quantity | delivery_address    
+    ---------+----------+---------------------
+    Chinedu  | 1        | P3 demo - for update
+    (1 row)
+  > SELECT stock_qty AS stock_now FROM part WHERE part_id = 10;
+    stock_now
+    ---------
+    0        
+    (1 row)
+

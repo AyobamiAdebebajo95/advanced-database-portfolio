@@ -1,0 +1,66 @@
+Output of 02_rollback_and_savepoint.sql  (two connections = Tab A and Tab B, run step by step)
+Run on PostgreSQL test server, 2026-10-12
+
+[t+  0.0s] STEP 1 - TAB A: BEFORE - count orders and check battery stock
+  > SELECT (SELECT COUNT(*) FROM orders) AS orders_before, (SELECT stock_qty FROM part WHERE part_id = 12) AS batt...
+    orders_before | battery_stock_before
+    --------------+---------------------
+    200009        | 15                  
+    (1 row)
+
+[t+  0.3s] STEP 2 - TAB A: start the order (the stock looks reduced INSIDE the transaction)
+  > BEGIN;
+    BEGIN
+  > INSERT INTO orders (customer_id, status, delivery_address, delivery_city, delivery_state) VALUES (9, 'Pending'...
+    INSERT 0 1
+  > INSERT INTO order_item (order_id, part_id, quantity, unit_price) VALUES (currval('orders_order_id_seq'), 12, 1...
+    INSERT 0 1
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 12;
+    UPDATE 1
+  > SELECT stock_qty AS stock_inside_transaction FROM part WHERE part_id = 12;
+    stock_inside_transaction
+    ------------------------
+    14                      
+    (1 row)
+
+[t+  0.6s] STEP 3 - TAB A: the payment gateway says "Card declined", so undo everything
+  > ROLLBACK;
+    ROLLBACK
+
+[t+  0.9s] STEP 4 - TAB A: AFTER - same number of orders, same stock. Nothing was saved.
+  > SELECT (SELECT COUNT(*) FROM orders) AS orders_after, (SELECT stock_qty FROM part WHERE part_id = 12) AS batte...
+    orders_after | battery_stock_after
+    -------------+--------------------
+    200009       | 15                 
+    (1 row)
+
+[t+  1.2s] STEP 5 - TAB A: order with a SAVEPOINT, then undo only the second item
+  > BEGIN;
+    BEGIN
+  > INSERT INTO orders (customer_id, status, delivery_address, delivery_city, delivery_state) VALUES (4, 'Paid', '...
+    INSERT 0 1
+  > INSERT INTO order_item (order_id, part_id, quantity, unit_price) VALUES (currval('orders_order_id_seq'), 4, 1,...
+    INSERT 0 1
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 4;
+    UPDATE 1
+  > SAVEPOINT before_second_item;
+    SAVEPOINT
+  > -- remember this point INSERT INTO order_item (order_id, part_id, quantity, unit_price) VALUES (currval('order...
+    INSERT 0 1
+  > SELECT stock_qty AS stabiliser_link_stock FROM part WHERE part_id = 14;
+    stabiliser_link_stock
+    ---------------------
+    0                    
+    (1 row)
+  > ROLLBACK TO SAVEPOINT before_second_item;
+    ROLLBACK
+  > COMMIT;
+    COMMIT
+
+[t+  1.5s] STEP 6 - TAB A: AFTER - the new order has ONE item (the oil filter), not two
+  > SELECT o.order_id, o.customer_id, oi.part_id, p.part_name, oi.quantity FROM orders o JOIN order_item oi ON oi....
+    order_id | customer_id | part_id | part_name  | quantity
+    ---------+-------------+---------+------------+---------
+    200011   | 4           | 4       | Oil Filter | 1       
+    (1 row)
+

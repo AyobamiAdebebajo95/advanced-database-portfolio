@@ -1,0 +1,65 @@
+Output of 08_deadlock.sql  (two connections = Tab A and Tab B, run step by step)
+Run on PostgreSQL test server, 2026-10-12
+
+[t+  0.0s] STEP 1 - TAB A: Chinedu's checkout reduces battery stock (locks part 2)
+  > BEGIN;
+    BEGIN
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 2;
+    UPDATE 1
+
+[t+  0.3s] STEP 2 - TAB B: Aisha's checkout reduces brake pad stock (locks part 3)
+  > BEGIN;
+    BEGIN
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 3;
+    UPDATE 1
+
+[t+  0.6s] STEP 3 - TAB A: Chinedu now needs part 3, which Aisha holds. Tab A WAITS.
+    ... WAITING (blocked by a lock held by the other tab) ...
+
+[t+  3.4s] STEP 4 - TAB B: Aisha now needs part 2, which Chinedu holds. Circle! PostgreSQL cancels Aisha.
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 2;
+    ERROR:  deadlock detected   [SQL state 40P01]
+
+[t+  4.7s] STEP 3 - TAB A has now FINISHED (it was waiting):
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 3;
+    UPDATE 1
+
+[t+  4.7s] STEP 5 - TAB B: Aisha's transaction was cancelled, so roll it back (her app would retry)
+  > ROLLBACK;
+    ROLLBACK
+
+[t+  5.0s] STEP 6 - TAB A: Chinedu's STEP 3 has finished, so his checkout completes. Then undo the demo.
+  > ROLLBACK;
+    ROLLBACK
+
+[t+  5.3s] STEP 7 - TAB A: lock ALL the parts in the basket at once, in part_id order
+  > BEGIN;
+    BEGIN
+  > SELECT part_id, stock_qty FROM part WHERE part_id IN (2, 3) ORDER BY part_id FOR UPDATE;
+    part_id | stock_qty
+    --------+----------
+    2       | 24       
+    3       | 30       
+    (2 rows)
+
+[t+  5.6s] STEP 8 - TAB B: Aisha's basket has the same parts, so she locks them in the SAME order. She simply WAITS - no deadlock.
+    ... WAITING (blocked by a lock held by the other tab) ...
+
+[t+  8.4s] STEP 9 - TAB A: Chinedu finishes (undo the demo), releasing the locks
+  > ROLLBACK;
+    ROLLBACK
+
+[t+  8.7s] STEP 8 - TAB B has now FINISHED (it was waiting):
+  > BEGIN;
+    BEGIN
+  > SELECT part_id, stock_qty FROM part WHERE part_id IN (2, 3) ORDER BY part_id FOR UPDATE;
+    part_id | stock_qty
+    --------+----------
+    2       | 24       
+    3       | 30       
+    (2 rows)
+
+[t+  8.7s] STEP 10 - TAB B: Aisha's STEP 8 has now finished normally. Finish (undo the demo).
+  > ROLLBACK;
+    ROLLBACK
+

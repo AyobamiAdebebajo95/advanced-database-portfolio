@@ -1,0 +1,22 @@
+Output of 03_place_order_function.sql  (two connections = Tab A and Tab B, run step by step)
+Run on PostgreSQL test server, 2026-10-12
+
+[t+  0.0s] STEP 1 - TAB A: create the function
+  > CREATE OR REPLACE FUNCTION place_order( p_customer_id INT, p_part_id INT, p_quantity INT, p_method VARCHAR ) R...
+    CREATE FUNCTION
+
+[t+  0.3s] STEP 2 - TAB A: a good order (result in Data Output)
+  > SELECT place_order(5, 6, 1, 'Bank Transfer') AS new_order_id;
+    new_order_id
+    ------------
+    200012      
+    (1 row)
+
+[t+  0.6s] STEP 3 - TAB A: a bad order (result in the Messages tab)
+  > DO $$ DECLARE orders_before INT := (SELECT COUNT(*) FROM orders); payments_before INT := (SELECT COUNT(*) FROM...
+    NOTICE:  Order refused: Not enough stock for part 14: wanted 1, only 0 left
+    NOTICE:  Orders   before: 200011, after: 200011
+    NOTICE:  Payments before: 10, after: 10
+    NOTICE:  Same numbers = the half-finished order was rolled back automatically
+    DO
+

@@ -1,0 +1,89 @@
+Output of 07_isolation_levels.sql  (two connections = Tab A and Tab B, run step by step)
+Run on PostgreSQL test server, 2026-10-12
+
+[t+  0.0s] SETUP - TAB A: reset the battery price
+  > UPDATE part SET price = 95000 WHERE part_id = 2;
+    UPDATE 1
+
+[t+  0.4s] STEP 1 - TAB A: the admin changes the price but has NOT committed yet
+  > BEGIN;
+    BEGIN
+  > UPDATE part SET price = 1 WHERE part_id = 2;
+    UPDATE 1
+
+[t+  0.7s] STEP 2 - TAB B: asks for READ UNCOMMITTED, but still sees 95000, not the unsaved 1
+  > BEGIN ISOLATION LEVEL READ UNCOMMITTED;
+    BEGIN
+  > SELECT price AS price_seen FROM part WHERE part_id = 2;
+    price_seen
+    ----------
+    95000.00  
+    (1 row)
+  > COMMIT;
+    COMMIT
+
+[t+  1.0s] STEP 3 - TAB A: the admin cancels the mistake
+  > ROLLBACK;
+    ROLLBACK
+
+[t+  1.3s] STEP 4 - TAB A: the customer's checkout starts and reads the price (95000)
+  > BEGIN ISOLATION LEVEL READ COMMITTED;
+    BEGIN
+  > SELECT price AS price_first_read FROM part WHERE part_id = 2;
+    price_first_read
+    ----------------
+    95000.00        
+    (1 row)
+
+[t+  1.6s] STEP 5 - TAB B: the admin raises the price and saves it
+  > UPDATE part SET price = 99000 WHERE part_id = 2;
+    UPDATE 1
+
+[t+  1.9s] STEP 6 - TAB A: same transaction, same query, but now it says 99000
+  > SELECT price AS price_second_read FROM part WHERE part_id = 2;
+    price_second_read
+    -----------------
+    99000.00         
+    (1 row)
+  > COMMIT;
+    COMMIT
+
+[t+  2.2s] STEP 7 - TAB A: reset the price, then start checkout at REPEATABLE READ (95000)
+  > UPDATE part SET price = 95000 WHERE part_id = 2;
+    UPDATE 1
+  > BEGIN ISOLATION LEVEL REPEATABLE READ;
+    BEGIN
+  > SELECT price AS price_first_read FROM part WHERE part_id = 2;
+    price_first_read
+    ----------------
+    95000.00        
+    (1 row)
+
+[t+  2.5s] STEP 8 - TAB B: the admin raises the price and saves it
+  > UPDATE part SET price = 99000 WHERE part_id = 2;
+    UPDATE 1
+
+[t+  2.8s] STEP 9 - TAB A: still 95000. The checkout keeps its own snapshot.
+  > SELECT price AS price_second_read FROM part WHERE part_id = 2;
+    price_second_read
+    -----------------
+    95000.00         
+    (1 row)
+
+[t+  3.1s] STEP 10 - TAB A: the checkout (still in its REPEATABLE READ transaction) tries to update the same row
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 2;
+    ERROR:  could not serialize access due to concurrent update   [SQL state 40001]
+
+[t+  3.4s] STEP 11 - TAB A: PostgreSQL said "could not serialize access due to concurrent update". Cancel; the app would retry.
+  > ROLLBACK;
+    ROLLBACK
+
+[t+  3.7s] CHECK - TAB A: put the price back
+  > UPDATE part SET price = 95000 WHERE part_id = 2;
+    UPDATE 1
+  > SELECT part_id, part_name, price, stock_qty FROM part WHERE part_id = 2;
+    part_id | part_name        | price    | stock_qty
+    --------+------------------+----------+----------
+    2       | Car Battery 75Ah | 95000.00 | 24       
+    (1 row)
+

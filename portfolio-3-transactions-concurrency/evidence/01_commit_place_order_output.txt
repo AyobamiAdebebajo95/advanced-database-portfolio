@@ -1,0 +1,43 @@
+Output of 01_commit_place_order.sql  (two connections = Tab A and Tab B, run step by step)
+Run on PostgreSQL test server, 2026-10-12
+
+[t+  0.0s] STEP 1 - TAB A: BEFORE - check the stock levels
+  > SELECT part_id, part_name, brand, stock_qty AS stock_before FROM part WHERE part_id IN (2, 15) ORDER BY part_i...
+    part_id | part_name                 | brand   | stock_before
+    --------+---------------------------+---------+-------------
+    2       | Car Battery 75Ah          | Varta   | 25          
+    15      | Headlight Bulbs H4 (pair) | Philips | 200         
+    (2 rows)
+
+[t+  0.3s] STEP 2 - TAB A: place the order as one transaction
+  > BEGIN;
+    BEGIN
+  > -- start the transaction INSERT INTO orders (customer_id, status, delivery_address, delivery_city, delivery_st...
+    INSERT 0 1
+  > INSERT INTO order_item (order_id, part_id, quantity, unit_price) VALUES (currval('orders_order_id_seq'), 2, 1,...
+    INSERT 0 2
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 2;
+    UPDATE 1
+  > UPDATE part SET stock_qty = stock_qty - 2 WHERE part_id = 15;
+    UPDATE 1
+  > INSERT INTO payment (order_id, amount, method, status) VALUES (currval('orders_order_id_seq'), 114000, 'Card',...
+    INSERT 0 1
+  > COMMIT;
+    COMMIT
+
+[t+  0.6s] STEP 3 - TAB A: AFTER - stock has gone down
+  > SELECT part_id, part_name, brand, stock_qty AS stock_after FROM part WHERE part_id IN (2, 15) ORDER BY part_id...
+    part_id | part_name                 | brand   | stock_after
+    --------+---------------------------+---------+------------
+    2       | Car Battery 75Ah          | Varta   | 24         
+    15      | Headlight Bulbs H4 (pair) | Philips | 198        
+    (2 rows)
+
+[t+  0.9s] STEP 4 - TAB A: AFTER - the order, its items and its payment all exist
+  > SELECT o.order_id, o.status, oi.part_id, oi.quantity, oi.unit_price, pay.amount AS paid, pay.method FROM order...
+    order_id | status | part_id | quantity | unit_price | paid      | method
+    ---------+--------+---------+----------+------------+-----------+-------
+    200009   | Paid   | 2       | 1        | 95000.00   | 114000.00 | Card  
+    200009   | Paid   | 15      | 2        | 9500.00    | 114000.00 | Card  
+    (2 rows)
+

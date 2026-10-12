@@ -30,7 +30,7 @@ MIVA Open University · Master of Information Technology · 2026/2027 First Seme
 |---|---|---|---|
 | [Portfolio 1](portfolio-1-database-design/) | Database Design and Modelling | 7 | Done |
 | [Portfolio 2](portfolio-2-query-optimisation/) | Query Processing and Optimisation | 7 | Done |
-| [Portfolio 3](portfolio-3-transactions-concurrency/) | Transactions and Concurrency | 7 | Not started |
+| [Portfolio 3](portfolio-3-transactions-concurrency/) | Transactions and Concurrency | 7 | Done |
 | [Portfolio 4](portfolio-4-nosql/) | NoSQL (Not only SQL) and Advanced Data Models | 7 | Not started |
 | [Portfolio 5](portfolio-5-distributed-cloud/) | Distributed and Cloud Database Exercise | 6 | Not started |
 | [Final Documentation](docs/) | Portfolio documentation and technical reflection | 6 | Not started |

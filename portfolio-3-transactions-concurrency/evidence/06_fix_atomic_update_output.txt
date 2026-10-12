@@ -1,0 +1,55 @@
+Output of 06_fix_atomic_update.sql  (two connections = Tab A and Tab B, run step by step)
+Run on PostgreSQL test server, 2026-10-12
+
+[t+  0.0s] SETUP - TAB A: reset: 1 headlamp left, remove old demo orders
+  > DELETE FROM order_item WHERE order_id IN (SELECT order_id FROM orders WHERE delivery_address LIKE 'P3 demo%');
+    DELETE 1
+  > DELETE FROM orders WHERE delivery_address LIKE 'P3 demo%';
+    DELETE 1
+  > UPDATE part SET stock_qty = 1 WHERE part_id = 10;
+    UPDATE 1
+  > SELECT part_id, part_name, stock_qty FROM part WHERE part_id = 10;
+    part_id | part_name         | stock_qty
+    --------+-------------------+----------
+    10      | Headlamp Assembly | 1        
+    (1 row)
+
+[t+  0.3s] STEP 1 - TAB A: Chinedu takes the headlamp (Messages tab shows UPDATE 1 = success)
+  > BEGIN;
+    BEGIN
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 10 AND stock_qty >= 1;
+    UPDATE 1
+
+[t+  0.6s] STEP 2 - TAB B: Aisha tries at the same moment. She WAITS for Chinedu's transaction.
+    ... WAITING (blocked by a lock held by the other tab) ...
+
+[t+  3.4s] STEP 3 - TAB A: Chinedu's order is saved and committed
+  > INSERT INTO orders (customer_id, status, delivery_address, delivery_city, delivery_state) VALUES (1, 'Paid', '...
+    INSERT 0 1
+  > INSERT INTO order_item (order_id, part_id, quantity, unit_price) VALUES (currval('orders_order_id_seq'), 10, 1...
+    INSERT 0 1
+  > COMMIT;
+    COMMIT
+
+[t+  3.7s] STEP 2 - TAB B has now FINISHED (it was waiting):
+  > BEGIN;
+    BEGIN
+  > UPDATE part SET stock_qty = stock_qty - 1 WHERE part_id = 10 AND stock_qty >= 1;
+    UPDATE 0
+
+[t+  3.7s] STEP 4 - TAB B: Aisha's STEP 2 now finishes with UPDATE 0 (no stock). Her app cancels.
+  > ROLLBACK;
+    ROLLBACK
+
+[t+  4.0s] CHECK - TAB A: one sale, stock 0
+  > SELECT c.first_name AS customer, oi.quantity, o.delivery_address FROM orders o JOIN order_item oi ON oi.order_...
+    customer | quantity | delivery_address       
+    ---------+----------+------------------------
+    Chinedu  | 1        | P3 demo - atomic update
+    (1 row)
+  > SELECT stock_qty AS stock_now FROM part WHERE part_id = 10;
+    stock_now
+    ---------
+    0        
+    (1 row)
+
