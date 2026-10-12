@@ -30,7 +30,11 @@ Each abbreviation is also spelled out the first time it appears on each page. Th
 | **2NF** | Second Normal Form | 1NF, and every column depends on the whole primary key |
 | **3NF** | Third Normal Form | 2NF, and no column depends on another non-key column |
 | **BCNF** | Boyce-Codd Normal Form | A stricter version of 3NF: everything that decides other columns must be a key |
-| **Q1–Q5** | Query 1 to Query 5 | The numbered example queries in `04_check_queries.sql` |
+| **Q1–Q6** | Query 1 to Query 6 | The numbered example queries in each portfolio's scripts |
+| **ACID** | Atomicity, Consistency, Isolation, Durability | The four promises a transaction makes (Portfolio 3) |
+| **PL/pgSQL** | Procedural Language / PostgreSQL | The language used to write database functions such as `place_order()` |
+| **ms** | Millisecond | One thousandth of a second; used for query times |
+| **KB / MB** | Kilobyte / Megabyte | Units of storage size (1 MB = 1,024 KB); a database page is 8 KB |
 
 ## Cars and auto parts
 
