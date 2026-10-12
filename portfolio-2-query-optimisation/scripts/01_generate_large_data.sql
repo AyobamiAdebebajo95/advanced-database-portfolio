@@ -14,6 +14,10 @@
 --
 -- setseed() makes random() give the SAME "random" data every time,
 -- so results can be repeated.
+--
+-- The script never assumes ID numbers. It looks up the real seller,
+-- customer and part IDs, because ID numbers can have gaps (a failed
+-- insert, like Portfolio 1's Test 9, still uses up an ID number).
 -- =====================================================================
 
 SELECT setseed(0.42);
@@ -34,8 +38,12 @@ FROM generate_series(7, 50) AS g;
 -- ---------------------------------------------------------------------
 -- 2. More parts (part_id 16 to 2,000)
 -- ---------------------------------------------------------------------
+WITH shops AS (                       -- the real IDs of all parts shops
+    SELECT array_agg(seller_id ORDER BY seller_id) AS ids
+    FROM seller WHERE seller_type = 'Parts Shop'
+)
 INSERT INTO part (seller_id, category_id, part_number, part_name, brand, price, stock_qty)
-SELECT CASE WHEN g % 47 < 3 THEN 4 + g % 3 ELSE 7 + g % 44 END,     -- a parts shop
+SELECT shops.ids[1 + g % array_length(shops.ids, 1)],             -- a parts shop
        1 + g % 7,                                                    -- category 1 to 7
        'NAM-' || lpad(g::text, 6, '0'),
        (ARRAY['Tyre','Battery','Brake Pads','Engine Mount','Oil Filter','Shock Absorber','Headlamp'])[1 + g % 7]
@@ -43,7 +51,7 @@ SELECT CASE WHEN g % 47 < 3 THEN 4 + g % 3 ELSE 7 + g % 44 END,     -- a parts s
        (ARRAY['Bosch','Denso','Michelin','Exide','Mann','KYB','Philips','Toyota','Honda','NGK'])[1 + g % 10],
        round((3000 + random() * 247000) / 500) * 500,                -- N3,000 to N250,000
        floor(random() * 200)::int
-FROM generate_series(16, 2000) AS g;
+FROM generate_series(16, 2000) AS g, shops;
 
 -- ---------------------------------------------------------------------
 -- 3. More customers (customer_id 13 to 20,000)
@@ -71,12 +79,15 @@ CROSS JOIN LATERAL (SELECT
 -- 4. 200,000 orders spread from January 2025 to October 2026
 --    About 2% Pending, 3% Paid, 3% Shipped, 4% Cancelled, 88% Delivered
 -- ---------------------------------------------------------------------
-WITH gen AS (
+WITH cust_ids AS (                    -- the real IDs of all customers
+    SELECT array_agg(customer_id ORDER BY customer_id) AS ids FROM customer
+),
+gen AS (
     SELECT g,
-           1 + floor(random() * 20000)::int                      AS cust,
+           cust_ids.ids[1 + floor(random() * array_length(cust_ids.ids, 1))::int] AS cust,
            TIMESTAMP '2025-01-01' + random() * INTERVAL '643 days' AS odate,
            random()                                              AS r
-    FROM generate_series(1, 200000) AS g
+    FROM generate_series(1, 200000) AS g, cust_ids
 )
 INSERT INTO orders (customer_id, order_date, status, delivery_address, delivery_city, delivery_state)
 SELECT gen.cust, gen.odate,
@@ -94,12 +105,16 @@ ORDER BY gen.g;
 -- ---------------------------------------------------------------------
 -- 5. Order items: 1 to 4 different parts per new order (~500,000 rows)
 -- ---------------------------------------------------------------------
+WITH part_ids AS (                    -- the real IDs of all parts
+    SELECT array_agg(part_id ORDER BY part_id) AS ids FROM part
+)
 INSERT INTO order_item (order_id, part_id, quantity, unit_price)
 SELECT o.order_id, p.part_id, 1 + floor(random() * 4)::int, p.price
 FROM orders o
+CROSS JOIN part_ids
 CROSS JOIN LATERAL generate_series(1, 1 + o.order_id % 4) AS k
-JOIN part p ON p.part_id = 1 + (o.order_id * 37 + k * 131) % 2000
-WHERE o.order_id > 8;          -- orders 1-8 already have items from Portfolio 1
+JOIN part p ON p.part_id = part_ids.ids[1 + (o.order_id * 37 + k * 131) % array_length(part_ids.ids, 1)]
+WHERE NOT EXISTS (SELECT 1 FROM order_item x WHERE x.order_id = o.order_id);  -- only the new orders
 
 -- ---------------------------------------------------------------------
 -- 6. Update the planner's statistics so it knows the tables are now big

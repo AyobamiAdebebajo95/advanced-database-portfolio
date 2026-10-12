@@ -5,28 +5,28 @@ CREATE INDEX
 ANALYZE
                                                        QUERY PLAN                                                        
 -------------------------------------------------------------------------------------------------------------------------
- Sort  (cost=4.02..4.04 rows=7 width=25) (actual time=0.031..0.032 rows=7 loops=1)
+ Sort  (cost=4.02..4.04 rows=7 width=25) (actual time=0.026..0.027 rows=7 loops=1)
    Sort Key: revenue DESC
    Sort Method: quicksort  Memory: 25kB
    Buffers: shared hit=2
-   ->  Seq Scan on monthly_category_revenue  (cost=0.00..3.92 rows=7 width=25) (actual time=0.020..0.021 rows=7 loops=1)
+   ->  Seq Scan on monthly_category_revenue  (cost=0.00..3.92 rows=7 width=25) (actual time=0.014..0.015 rows=7 loops=1)
          Filter: (month = '2026-09-01'::date)
          Rows Removed by Filter: 147
          Buffers: shared hit=2
  Planning:
    Buffers: shared hit=24 read=1
- Planning Time: 0.121 ms
- Execution Time: 0.043 ms
+ Planning Time: 0.166 ms
+ Execution Time: 0.039 ms
 (12 rows)
 
  category_name | orders |    revenue    
 ---------------+--------+---------------
- Filters       |   3209 | 1092602000.00
- Engine Parts  |   3160 | 1069253000.00
- Suspension    |   3157 | 1039671000.00
- Brakes        |   3169 | 1023785000.00
- Lighting      |   3141 | 1021986000.00
- Tyres         |   3181 | 1015987500.00
- Batteries     |   3152 | 1002484500.00
+ Filters       |   3209 | 1082378000.00
+ Engine Parts  |   3160 | 1070206000.00
+ Suspension    |   3157 | 1041141500.00
+ Tyres         |   3181 | 1028026000.00
+ Lighting      |   3141 | 1025792500.00
+ Brakes        |   3169 | 1009675500.00
+ Batteries     |   3152 | 1002267000.00
 (7 rows)
 

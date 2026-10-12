@@ -54,13 +54,13 @@ Each query was run once to warm up, then 3 more times. The middle (median) time 
 
 | Query | What it does | Before | After | Change | Technique used |
 |---|---|---|---|---|---|
-| **Q1** | A customer's order history, newest first | 12.33 ms | 0.20 ms | **~62× faster** | Composite index `(customer_id, order_date)` |
-| **Q2** | Admin list of pending orders | 15.78 ms | 4.50 ms | **~3.5× faster** | Partial index (only Pending orders) |
-| **Q3** | Login by email, ignoring capital letters | 8.46 ms | 0.02 ms | **~400× faster** | Expression index on `lower(email)` |
-| **Q4** | Every sale of one part | 24.61 ms | 1.67 ms | **~15× faster** | Index on the foreign key `order_item.part_id` |
-| **Q5** | Revenue by category for September 2026 | 90.35 ms | 91.75 ms | **No real change** | Index on `order_date` (did not help enough) |
-| **Q5** | …using a materialized view instead | 90.35 ms | 0.09 ms | **~1000× faster** | Materialized view (pre-calculated summary) |
-| **Q6** | Insert 10,000 new orders | 84.42 ms | 133.36 ms | **~58% slower** | Cost of keeping 5 extra indexes updated |
+| **Q1** | A customer's order history, newest first | 10.83 ms | 0.21 ms | **~50× faster** | Composite index `(customer_id, order_date)` |
+| **Q2** | Admin list of pending orders | 15.05 ms | 5.21 ms | **~3× faster** | Partial index (only Pending orders) |
+| **Q3** | Login by email, ignoring capital letters | 11.39 ms | 0.02 ms | **~500× faster** | Expression index on `lower(email)` |
+| **Q4** | Every sale of one part | 22.30 ms | 1.72 ms | **~13× faster** | Index on the foreign key `order_item.part_id` |
+| **Q5** | Revenue by category for September 2026 | 84.29 ms | 86.88 ms | **No real change** | Index on `order_date` (did not help enough) |
+| **Q5** | …using a materialized view instead | 84.29 ms | 0.09 ms | **~1000× faster** | Materialized view (pre-calculated summary) |
+| **Q6** | Insert 10,000 new orders | 80.75 ms | 109.14 ms | **~35% slower** | Cost of keeping 5 extra indexes updated |
 
 The five indexes take about **15 MB** of disk space. Full timings: [timing_summary.txt](evidence/timing_summary.txt).
 
@@ -76,7 +76,7 @@ The five indexes take about **15 MB** of disk space. Full timings: [timing_summa
 **Q2: pending orders (partial index)**
 - *Before:* `Seq Scan on orders`, which read 200,008 rows and threw away 196,162 to keep the 3,846 pending ones.
 - *After:* `Bitmap Index Scan on idx_orders_pending_date`. The index is tiny (104 KB) because it only stores Pending orders.
-- *Why only 3.5×:* the 3,846 pending orders are scattered all over the table, so PostgreSQL still had to visit 1,759 of the 2,203 pages to fetch them. An index helps most when it leads to a **small** number of rows.
+- *Why only 3×:* the 3,846 pending orders are scattered all over the table, so PostgreSQL still had to visit 1,759 of the 2,203 pages to fetch them. An index helps most when it leads to a **small** number of rows.
 
 **Q3: login by email (expression index)**
 - *Before:* `Seq Scan on customer`, which read all 20,000 customers to find 1 (`Rows Removed by Filter: 19999`). The existing UNIQUE index on `email` **could not be used**, because the query searches `lower(email)`, not `email`.
@@ -94,7 +94,7 @@ The five indexes take about **15 MB** of disk space. Full timings: [timing_summa
 - *Trade-off:* a materialized view doesn't update by itself. It must be refreshed, for example every night. That's fine for monthly reports, but not for live data like stock levels.
 
 **Q6: the cost of indexes**
-- Inserting 10,000 orders took **~58% longer** after the indexes were added, because each new row must also be written into every index on the table.
+- Inserting 10,000 orders took **~35% longer** after the indexes were added, because each new row must also be written into every index on the table.
 - *Lesson:* add indexes for the queries that really need them, not on every column. NaijaAutoMart reads orders far more often than it creates them, so this trade-off is worth it.
 
 ---

@@ -72,7 +72,7 @@ ORDER BY revenue DESC;
 BEGIN;
 EXPLAIN (ANALYZE)
 INSERT INTO orders (customer_id, order_date, status, delivery_address, delivery_city, delivery_state)
-SELECT 1 + g % 20000, TIMESTAMP '2026-10-06' + g * INTERVAL '1 minute', 'Delivered',
+SELECT customer_id, TIMESTAMP '2026-10-06' + customer_id * INTERVAL '1 minute', 'Delivered',
        'Test Address', 'Ikeja', 'Lagos'
-FROM generate_series(1, 10000) AS g;
+FROM (SELECT customer_id FROM customer ORDER BY customer_id LIMIT 10000) AS c;   -- 10,000 real customers
 ROLLBACK;

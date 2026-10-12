@@ -1,141 +1,144 @@
                                                                QUERY PLAN                                                                
 -----------------------------------------------------------------------------------------------------------------------------------------
- Sort  (cost=46.69..46.72 rows=11 width=21) (actual time=0.168..0.169 rows=10 loops=1)
+ Sort  (cost=46.69..46.72 rows=11 width=21) (actual time=0.136..0.137 rows=10 loops=1)
    Sort Key: order_date DESC
    Sort Method: quicksort  Memory: 25kB
    Buffers: shared hit=17
-   ->  Bitmap Heap Scan on orders  (cost=4.51..46.50 rows=11 width=21) (actual time=0.042..0.125 rows=10 loops=1)
+   ->  Bitmap Heap Scan on orders  (cost=4.51..46.50 rows=11 width=21) (actual time=0.033..0.105 rows=10 loops=1)
          Recheck Cond: (customer_id = 4521)
          Heap Blocks: exact=11
          Buffers: shared hit=14
-         ->  Bitmap Index Scan on idx_orders_customer_date  (cost=0.00..4.50 rows=11 width=0) (actual time=0.021..0.021 rows=11 loops=1)
+         ->  Bitmap Index Scan on idx_orders_customer_date  (cost=0.00..4.50 rows=11 width=0) (actual time=0.015..0.015 rows=11 loops=1)
                Index Cond: (customer_id = 4521)
                Buffers: shared hit=3
  Planning:
    Buffers: shared hit=134
- Planning Time: 0.764 ms
- Execution Time: 0.265 ms
+ Planning Time: 0.586 ms
+ Execution Time: 0.219 ms
 (15 rows)
 
                                                                  QUERY PLAN                                                                  
 ---------------------------------------------------------------------------------------------------------------------------------------------
- Sort  (cost=3100.67..3111.19 rows=4206 width=16) (actual time=8.072..8.703 rows=3846 loops=1)
+ Sort  (cost=3099.66..3109.95 rows=4116 width=16) (actual time=7.174..7.705 rows=3846 loops=1)
    Sort Key: order_date
    Sort Method: quicksort  Memory: 247kB
    Buffers: shared hit=1759
-   ->  Bitmap Heap Scan on orders  (cost=73.54..2847.51 rows=4206 width=16) (actual time=0.797..6.356 rows=3846 loops=1)
+   ->  Bitmap Heap Scan on orders  (cost=73.08..2852.55 rows=4116 width=16) (actual time=0.663..5.736 rows=3846 loops=1)
          Recheck Cond: ((status)::text = 'Pending'::text)
          Heap Blocks: exact=1747
          Buffers: shared hit=1759
-         ->  Bitmap Index Scan on idx_orders_pending_date  (cost=0.00..72.48 rows=4206 width=0) (actual time=0.496..0.497 rows=3846 loops=1)
+         ->  Bitmap Index Scan on idx_orders_pending_date  (cost=0.00..72.05 rows=4116 width=0) (actual time=0.404..0.405 rows=3846 loops=1)
                Buffers: shared hit=12
  Planning:
    Buffers: shared hit=12
  Planning Time: 0.165 ms
- Execution Time: 9.055 ms
+ Execution Time: 7.983 ms
 (14 rows)
 
                                                              QUERY PLAN                                                             
 ------------------------------------------------------------------------------------------------------------------------------------
- Index Scan using idx_customer_lower_email on customer  (cost=0.29..8.30 rows=1 width=16) (actual time=0.019..0.020 rows=1 loops=1)
+ Index Scan using idx_customer_lower_email on customer  (cost=0.29..8.30 rows=1 width=16) (actual time=0.017..0.017 rows=1 loops=1)
    Index Cond: (lower((email)::text) = 'chinedu.okafor@gmail.com'::text)
    Buffers: shared hit=3
  Planning:
    Buffers: shared hit=74
- Planning Time: 0.465 ms
- Execution Time: 0.034 ms
+ Planning Time: 0.404 ms
+ Execution Time: 0.030 ms
 (7 rows)
 
                                                                  QUERY PLAN                                                                 
 --------------------------------------------------------------------------------------------------------------------------------------------
- Sort  (cost=2562.75..2563.34 rows=236 width=22) (actual time=2.680..2.704 rows=200 loops=1)
+ Sort  (cost=2574.04..2574.64 rows=237 width=22) (actual time=2.141..2.165 rows=200 loops=1)
    Sort Key: o.order_date
    Sort Method: quicksort  Memory: 35kB
-   Buffers: shared hit=1004
-   ->  Nested Loop  (cost=6.67..2553.44 rows=236 width=22) (actual time=0.120..2.584 rows=200 loops=1)
-         Buffers: shared hit=1004
-         ->  Bitmap Heap Scan on order_item oi  (cost=6.25..738.19 rows=236 width=14) (actual time=0.106..1.443 rows=200 loops=1)
+   Buffers: shared hit=1001
+   ->  Nested Loop  (cost=6.68..2564.70 rows=237 width=22) (actual time=0.070..2.065 rows=200 loops=1)
+         Buffers: shared hit=1001
+         ->  Bitmap Heap Scan on order_item oi  (cost=6.26..741.01 rows=237 width=14) (actual time=0.057..1.069 rows=200 loops=1)
                Recheck Cond: (part_id = 250)
-               Heap Blocks: exact=200
-               Buffers: shared hit=204
-               ->  Bitmap Index Scan on idx_order_item_part  (cost=0.00..6.19 rows=236 width=0) (actual time=0.031..0.031 rows=200 loops=1)
+               Heap Blocks: exact=197
+               Buffers: shared hit=201
+               ->  Bitmap Index Scan on idx_order_item_part  (cost=0.00..6.20 rows=237 width=0) (actual time=0.026..0.027 rows=200 loops=1)
                      Index Cond: (part_id = 250)
                      Buffers: shared hit=4
-         ->  Index Scan using orders_pkey on orders o  (cost=0.42..7.69 rows=1 width=12) (actual time=0.005..0.005 rows=1 loops=200)
+         ->  Index Scan using orders_pkey on orders o  (cost=0.42..7.69 rows=1 width=12) (actual time=0.004..0.004 rows=1 loops=200)
                Index Cond: (order_id = oi.order_id)
                Buffers: shared hit=800
  Planning:
    Buffers: shared hit=273
- Planning Time: 4.044 ms
- Execution Time: 2.749 ms
+ Planning Time: 3.273 ms
+ Execution Time: 2.216 ms
 (20 rows)
 
                                                                                                    QUERY PLAN                                                                                                   
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Sort  (cost=13613.19..13613.21 rows=7 width=49) (actual time=84.754..85.230 rows=7 loops=1)
+ Sort  (cost=13615.99..13616.01 rows=7 width=49) (actual time=99.334..102.358 rows=7 loops=1)
    Sort Key: (sum(((oi.quantity)::numeric * oi.unit_price))) DESC
    Sort Method: quicksort  Memory: 25kB
    Buffers: shared hit=5495
-   ->  GroupAggregate  (cost=10605.12..13613.09 rows=7 width=49) (actual time=69.505..85.186 rows=7 loops=1)
+   ->  GroupAggregate  (cost=10605.99..13615.89 rows=7 width=49) (actual time=84.430..102.310 rows=7 loops=1)
          Group Key: pc.category_name
          Buffers: shared hit=5492
-         ->  Gather Merge  (cost=10605.12..13321.47 rows=23323 width=23) (actual time=67.746..78.671 rows=23045 loops=1)
+         ->  Gather Merge  (cost=10605.99..13324.08 rows=23338 width=23) (actual time=82.723..95.472 rows=23045 loops=1)
                Workers Planned: 2
                Workers Launched: 2
                Buffers: shared hit=5492
-               ->  Sort  (cost=9605.10..9629.39 rows=9718 width=23) (actual time=61.604..62.355 rows=7682 loops=3)
+               ->  Sort  (cost=9605.96..9630.27 rows=9724 width=23) (actual time=76.741..77.893 rows=7682 loops=3)
                      Sort Key: pc.category_name, o.order_id
-                     Sort Method: quicksort  Memory: 490kB
+                     Sort Method: quicksort  Memory: 540kB
                      Buffers: shared hit=5492
-                     Worker 0:  Sort Method: quicksort  Memory: 485kB
-                     Worker 1:  Sort Method: quicksort  Memory: 976kB
-                     ->  Hash Join  (cost=3079.65..8961.45 rows=9718 width=23) (actual time=7.609..53.569 rows=7682 loops=3)
+                     Worker 0:  Sort Method: quicksort  Memory: 576kB
+                     Worker 1:  Sort Method: quicksort  Memory: 836kB
+                     ->  Hash Join  (cost=3080.04..8961.88 rows=9724 width=23) (actual time=9.509..68.156 rows=7682 loops=3)
                            Hash Cond: (p.category_id = pc.category_id)
                            Buffers: shared hit=5462
-                           ->  Hash Join  (cost=3078.49..8919.34 rows=9718 width=18) (actual time=7.495..52.324 rows=7682 loops=3)
+                           ->  Hash Join  (cost=3078.88..8919.74 rows=9724 width=18) (actual time=9.400..66.525 rows=7682 loops=3)
                                  Hash Cond: (oi.part_id = p.part_id)
                                  Buffers: shared hit=5365
-                                 ->  Parallel Hash Join  (cost=3010.49..8825.78 rows=9718 width=18) (actual time=6.627..47.803 rows=7682 loops=3)
+                                 ->  Parallel Hash Join  (cost=3010.88..8826.16 rows=9724 width=18) (actual time=7.187..61.465 rows=7682 loops=3)
                                        Hash Cond: (oi.order_id = o.order_id)
                                        Buffers: shared hit=5296
-                                       ->  Parallel Seq Scan on order_item oi  (cost=0.00..5268.38 rows=208338 width=18) (actual time=0.028..14.574 rows=166671 loops=3)
+                                       ->  Parallel Seq Scan on order_item oi  (cost=0.00..5268.38 rows=208338 width=18) (actual time=0.025..17.859 rows=166671 loops=3)
                                              Buffers: shared hit=3185
-                                       ->  Parallel Hash  (cost=2939.08..2939.08 rows=5713 width=4) (actual time=4.751..4.753 rows=3057 loops=3)
-                                             Buckets: 16384  Batches: 1  Memory Usage: 544kB
+                                       ->  Parallel Hash  (cost=2939.43..2939.43 rows=5716 width=4) (actual time=5.597..5.599 rows=3057 loops=3)
+                                             Buckets: 16384  Batches: 1  Memory Usage: 512kB
                                              Buffers: shared hit=2111
-                                             ->  Parallel Bitmap Heap Scan on orders o  (cost=219.98..2939.08 rows=5713 width=4) (actual time=0.974..5.904 rows=4585 loops=2)
+                                             ->  Parallel Bitmap Heap Scan on orders o  (cost=220.15..2939.43 rows=5716 width=4) (actual time=0.786..6.967 rows=4585 loops=2)
                                                    Recheck Cond: ((order_date >= '2026-09-01 00:00:00'::timestamp without time zone) AND (order_date < '2026-10-01 00:00:00'::timestamp without time zone))
                                                    Filter: ((status)::text <> 'Cancelled'::text)
                                                    Rows Removed by Filter: 166
-                                                   Heap Blocks: exact=586
+                                                   Heap Blocks: exact=1048
                                                    Buffers: shared hit=2111
-                                                   ->  Bitmap Index Scan on idx_orders_date  (cost=0.00..217.55 rows=10113 width=0) (actual time=1.166..1.167 rows=9503 loops=1)
+                                                   ->  Bitmap Index Scan on idx_orders_date  (cost=0.00..217.72 rows=10130 width=0) (actual time=1.200..1.200 rows=9503 loops=1)
                                                          Index Cond: ((order_date >= '2026-09-01 00:00:00'::timestamp without time zone) AND (order_date < '2026-10-01 00:00:00'::timestamp without time zone))
                                                          Buffers: shared hit=29
-                                 ->  Hash  (cost=43.00..43.00 rows=2000 width=8) (actual time=0.845..0.846 rows=2000 loops=3)
+                                 ->  Hash  (cost=43.00..43.00 rows=2000 width=8) (actual time=2.191..2.192 rows=2000 loops=3)
                                        Buckets: 2048  Batches: 1  Memory Usage: 95kB
                                        Buffers: shared hit=69
-                                       ->  Seq Scan on part p  (cost=0.00..43.00 rows=2000 width=8) (actual time=0.009..0.406 rows=2000 loops=3)
+                                       ->  Seq Scan on part p  (cost=0.00..43.00 rows=2000 width=8) (actual time=0.006..1.728 rows=2000 loops=3)
                                              Buffers: shared hit=69
-                           ->  Hash  (cost=1.07..1.07 rows=7 width=13) (actual time=0.035..0.036 rows=7 loops=3)
+                           ->  Hash  (cost=1.07..1.07 rows=7 width=13) (actual time=0.024..0.024 rows=7 loops=3)
                                  Buckets: 1024  Batches: 1  Memory Usage: 9kB
                                  Buffers: shared hit=3
-                                 ->  Seq Scan on part_category pc  (cost=0.00..1.07 rows=7 width=13) (actual time=0.023..0.024 rows=7 loops=3)
+                                 ->  Seq Scan on part_category pc  (cost=0.00..1.07 rows=7 width=13) (actual time=0.012..0.014 rows=7 loops=3)
                                        Buffers: shared hit=3
  Planning:
    Buffers: shared hit=416
- Planning Time: 4.271 ms
- Execution Time: 85.482 ms
+ Planning Time: 3.706 ms
+ Execution Time: 102.619 ms
 (54 rows)
 
 BEGIN
-                                                            QUERY PLAN                                                            
-----------------------------------------------------------------------------------------------------------------------------------
- Insert on orders  (cost=0.00..275.00 rows=0 width=0) (actual time=79.743..79.744 rows=0 loops=1)
-   ->  Function Scan on generate_series g  (cost=0.00..275.00 rows=10000 width=678) (actual time=0.554..7.041 rows=10000 loops=1)
- Planning Time: 0.075 ms
- Trigger for constraint orders_customer_id_fkey: time=53.031 calls=10000
- Execution Time: 133.362 ms
-(5 rows)
+                                                                       QUERY PLAN                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+ Insert on orders  (cost=0.29..389.29 rows=0 width=0) (actual time=71.279..71.280 rows=0 loops=1)
+   ->  Subquery Scan on c  (cost=0.29..389.29 rows=10000 width=678) (actual time=0.133..7.160 rows=10000 loops=1)
+         ->  Limit  (cost=0.29..264.29 rows=10000 width=4) (actual time=0.043..1.889 rows=10000 loops=1)
+               ->  Index Only Scan using customer_pkey on customer  (cost=0.29..528.29 rows=20000 width=4) (actual time=0.042..1.278 rows=10000 loops=1)
+                     Heap Fetches: 0
+ Planning Time: 0.122 ms
+ Trigger for constraint orders_customer_id_fkey: time=47.753 calls=10000
+ Execution Time: 119.528 ms
+(8 rows)
 
 ROLLBACK
