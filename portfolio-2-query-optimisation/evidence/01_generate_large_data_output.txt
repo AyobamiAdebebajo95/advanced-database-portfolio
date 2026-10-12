@@ -1,0 +1,19 @@
+ setseed 
+---------
+ 
+(1 row)
+
+INSERT 0 44
+INSERT 0 1985
+INSERT 0 19988
+INSERT 0 200000
+INSERT 0 500000
+ANALYZE
+ table_name |  rows  
+------------+--------
+ part       |   2000
+ customer   |  20000
+ orders     | 200008
+ order_item | 500012
+(4 rows)
+

@@ -1,0 +1,16 @@
+NaijaAutoMart - Portfolio 2 timing summary (test run, PostgreSQL 16)
+Each query: 1 warm-up run, then 3 timed runs. Median of the 3 is reported.
+Data: 20,000 customers | 2,000 parts | 200,008 orders | 500,012 order items
+
+Query                                   Before (ms)   After (ms)   Change
+Q1 Customer order history                   12.33         0.20     ~62x faster
+Q2 Pending orders dashboard                 15.78         4.50     ~3.5x faster
+Q3 Login by email (any capitals)             8.46         0.02     ~400x faster
+Q4 Sales of one part                        24.61         1.67     ~15x faster
+Q5 Monthly revenue by category              90.35        91.75     no real change
+Q5 via materialized view (script 04)            -         0.09     ~1000x faster than Q5 before
+Q6 Insert 10,000 orders (write cost)        84.42       133.36     ~58% SLOWER (indexes must be updated)
+
+Index sizes: idx_orders_customer_date 6184 kB | idx_orders_date 4408 kB |
+             idx_order_item_part 3368 kB | idx_customer_lower_email 976 kB |
+             idx_orders_pending_date 104 kB   (total about 15 MB)
