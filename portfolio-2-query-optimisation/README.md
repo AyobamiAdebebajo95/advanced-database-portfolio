@@ -117,6 +117,64 @@ Tip: in pgAdmin, put the cursor on one query and press **F7** to see its plan as
 
 ## Evidence
 
+### Screenshots from my own computer (pgAdmin 4, PostgreSQL 18, 12 October 2026)
+
+The plan shapes match the test run above. Times are different because every computer is different.
+
+**1. Large data loaded (script 01)**
+
+![200,008 orders and 500,012 order items loaded](evidence/screenshots/01c_generate_data_finished_row_counts.png)
+
+| Screenshot | Shows |
+|---|---|
+| [01a_generate_data_start_and_row_counts.png](evidence/screenshots/01a_generate_data_start_and_row_counts.png) | Start of the script and the final row counts |
+| [01b_generate_data_real_id_lookup.png](evidence/screenshots/01b_generate_data_real_id_lookup.png) | The script looking up real seller IDs (the fix for the ID gap bug) |
+| [01c_generate_data_finished_row_counts.png](evidence/screenshots/01c_generate_data_finished_row_counts.png) | 2,000 parts, 20,000 customers, 200,008 orders, 500,012 order items |
+
+**2. BEFORE indexes (script 02, first run)**
+
+![Q1 before: Parallel Seq Scan on orders, 100,000 rows removed by filter](evidence/screenshots/02_before_q1_seq_scan.png)
+
+| Query | Screenshot | What it shows |
+|---|---|---|
+| Q1 | [02_before_q1_plan_top.png](evidence/screenshots/02_before_q1_plan_top.png), [02_before_q1_seq_scan.png](evidence/screenshots/02_before_q1_seq_scan.png) | `Parallel Seq Scan on orders`, 100,000 rows removed per process, **124 ms** on my PC |
+| Q2 | [02_before_q2_seq_scan.png](evidence/screenshots/02_before_q2_seq_scan.png) | `Seq Scan on orders`, 196,162 rows removed to find 3,846 pending orders |
+| Q3 | [02_before_q3_seq_scan.png](evidence/screenshots/02_before_q3_seq_scan.png) | `Seq Scan on customer`, 19,999 rows removed to find 1, **18.3 ms** on my PC |
+| Q4 | [02_before_q4_plan.png](evidence/screenshots/02_before_q4_plan.png) | Parallel plan reading 4,000 pages to find 200 sales of one part |
+| Q5 | [02_before_q5_plan.png](evidence/screenshots/02_before_q5_plan.png) | Hash joins over the full order and order item tables |
+| Q6 | [02_before_q6_insert_rolled_back.png](evidence/screenshots/02_before_q6_insert_rolled_back.png) | 10,000-order insert test, rolled back so nothing is kept |
+
+**3. Indexes created (script 03)**
+
+![Sizes of the 5 new indexes](evidence/screenshots/03g_index_sizes.png)
+
+| Screenshot | Shows |
+|---|---|
+| [03a_index_customer_date.png](evidence/screenshots/03a_index_customer_date.png) | Composite index for Q1 |
+| [03b_index_pending_partial.png](evidence/screenshots/03b_index_pending_partial.png) | Partial index for Q2 |
+| [03c_index_lower_email.png](evidence/screenshots/03c_index_lower_email.png) | Expression index for Q3 |
+| [03d_index_order_item_part.png](evidence/screenshots/03d_index_order_item_part.png) | Foreign key index for Q4 |
+| [03e_index_orders_date.png](evidence/screenshots/03e_index_orders_date.png) | Date index for Q5 |
+| [03f_analyze.png](evidence/screenshots/03f_analyze.png) | `ANALYZE` updating the planner's statistics |
+| [03g_index_sizes.png](evidence/screenshots/03g_index_sizes.png) | Index sizes: 6,184 KB down to 104 KB |
+
+**4. AFTER indexes (script 02, second run)**
+
+*To be added: screenshots of Q1–Q5 after the indexes, showing Index Scans.*
+
+**5. Materialized view for Q5 (script 04)**
+
+![Q5 from the materialized view: 2 pages read](evidence/screenshots/04c_q5_materialized_view_plan.png)
+
+| Screenshot | Shows |
+|---|---|
+| [04a_create_materialized_view.png](evidence/screenshots/04a_create_materialized_view.png) | View created: 154 summary rows |
+| [04b_materialized_view_index.png](evidence/screenshots/04b_materialized_view_index.png) | Index on the view's month column |
+| [04c_q5_materialized_view_plan.png](evidence/screenshots/04c_q5_materialized_view_plan.png) | Q5 now reads **2 pages** and finishes in **0.065 ms** |
+| [04d_q5_materialized_view_result.png](evidence/screenshots/04d_q5_materialized_view_result.png) | September 2026 revenue by category; the view appears in pgAdmin |
+
+### Text outputs from the test run
+
 | File | Shows |
 |---|---|
 | [01_generate_large_data_output.txt](evidence/01_generate_large_data_output.txt) | Row counts after loading the data |
