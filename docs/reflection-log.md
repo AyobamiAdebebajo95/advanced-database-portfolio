@@ -19,3 +19,8 @@ Also, always make sure to refresh pgAdmin, so that the most recently created or 
 
 **Looking ahead to query optimisation?**
 For query optimisation, I am looking forward to running queries that would make the system work efficiently and return results faster.
+
+## Week 2 – Portfolio 2: Query Optimisation (12 Oct 2026)
+
+**Problem I faced and what I learned?**
+When the Portfolio 2 data script failed, my first thought was that it was a primary key issue caused by conflicting data. After a few minutes of reflection, I realised the real cause was how rows had been inserted earlier: a failed insert in my Portfolio 1 tests had used up seller ID 7, so seller 7 never existed and the foreign key on the part table stopped my script from running. Going forward, I will test my scripts to make sure they do not assume ID numbers, so there are no ID collisions.
