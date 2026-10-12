@@ -160,7 +160,25 @@ The plan shapes match the test run above. Times are different because every comp
 
 **4. AFTER indexes (script 02, second run)**
 
-*To be added: screenshots of Q1–Q5 after the indexes, showing Index Scans.*
+![Q1 after: Bitmap Index Scan on idx_orders_customer_date, 0.453 ms](evidence/screenshots/02_after_q1_index_scan.png)
+
+| Query | Screenshot | What it shows |
+|---|---|---|
+| Q1 | [02_after_q1_index_scan.png](evidence/screenshots/02_after_q1_index_scan.png) | `Bitmap Index Scan on idx_orders_customer_date`, only **3 pages** read from the index, **0.45 ms** |
+| Q2 | [02_after_q2_partial_index.png](evidence/screenshots/02_after_q2_partial_index.png) | `Bitmap Index Scan on idx_orders_pending_date` finds the 3,846 pending orders, but still visits 1,747 table pages (they are scattered) |
+| Q3 | [02_after_q3_expression_index.png](evidence/screenshots/02_after_q3_expression_index.png) | `Index Scan using idx_customer_lower_email`, **3 pages**, **0.20 ms** |
+| Q4 | [02_after_q4_part_index.png](evidence/screenshots/02_after_q4_part_index.png) | 200 sales found through the new index, **3.0 ms** |
+| Q5 | [02_after_q5_still_slow.png](evidence/screenshots/02_after_q5_still_slow.png) | Still slow (**359 ms**): the index alone was not enough, which is why the materialized view was needed |
+
+**On my own PC (PostgreSQL 18)**, from the screenshots above:
+
+| Query | Before | After | Change |
+|---|---|---|---|
+| Q1 Customer order history | 124.17 ms | 0.45 ms | ~270× faster |
+| Q3 Login by email | 18.33 ms | 0.20 ms | ~90× faster |
+| Q5 from the materialized view | – | 0.065 ms | (see section 5) |
+
+The exact times differ from the test run, as expected on a different computer, but the plan changes are identical.
 
 **5. Materialized view for Q5 (script 04)**
 
