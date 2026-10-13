@@ -60,6 +60,8 @@ COMMIT;
 
 -- STEP 7 - TAB A: reset the price, then start checkout at REPEATABLE READ (95000)
 UPDATE part SET price = 95000 WHERE part_id = 2;
+COMMIT;   -- closes any transaction still open, so the isolation level can be set
+          -- (if nothing was open, PostgreSQL just warns "no transaction in progress")
 BEGIN ISOLATION LEVEL REPEATABLE READ;
 SELECT price AS price_first_read FROM part WHERE part_id = 2;
 

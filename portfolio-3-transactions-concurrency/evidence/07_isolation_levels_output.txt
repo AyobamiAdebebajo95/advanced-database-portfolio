@@ -1,5 +1,5 @@
 Output of 07_isolation_levels.sql  (two connections = Tab A and Tab B, run step by step)
-Run on PostgreSQL test server, 2026-10-12
+Run on PostgreSQL test server, 2026-10-13
 
 [t+  0.0s] SETUP - TAB A: reset the battery price
   > UPDATE part SET price = 95000 WHERE part_id = 2;
@@ -51,7 +51,10 @@ Run on PostgreSQL test server, 2026-10-12
 [t+  2.2s] STEP 7 - TAB A: reset the price, then start checkout at REPEATABLE READ (95000)
   > UPDATE part SET price = 95000 WHERE part_id = 2;
     UPDATE 1
-  > BEGIN ISOLATION LEVEL REPEATABLE READ;
+  > COMMIT;
+    WARNING:  there is no transaction in progress
+    COMMIT
+  > -- closes any transaction still open, so the isolation level can be set BEGIN ISOLATION LEVEL REPEATABLE READ;
     BEGIN
   > SELECT price AS price_first_read FROM part WHERE part_id = 2;
     price_first_read
@@ -84,6 +87,6 @@ Run on PostgreSQL test server, 2026-10-12
   > SELECT part_id, part_name, price, stock_qty FROM part WHERE part_id = 2;
     part_id | part_name        | price    | stock_qty
     --------+------------------+----------+----------
-    2       | Car Battery 75Ah | 95000.00 | 24       
+    2       | Car Battery 75Ah | 95000.00 | 25       
     (1 row)
 

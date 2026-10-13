@@ -101,6 +101,8 @@ Run on the `naijaautomart` database after Portfolio 1 (the Portfolio 2 data is o
 | 7 | [07_isolation_levels.sql](scripts/07_isolation_levels.sql) | 2 |
 | 8 | [08_deadlock.sql](scripts/08_deadlock.sql) | 2 |
 
+*If you see* `SET TRANSACTION ISOLATION LEVEL must be called before any query` *(error 25001):* that tab already had a transaction open, so the isolation level could not be changed. Run `ROLLBACK;` in that tab and try the step again. Also check that **Auto commit** is ticked in the Query Tool (the drop-down arrow next to the Run button); if it's off, pgAdmin quietly starts a transaction for you.
+
 *Tip:* if pgAdmin's "auto-rollback on error" setting is on, it cancels the transaction for you after an error. A later `ROLLBACK` step may then just say "there is no transaction in progress", which is fine.
 
 ---
