@@ -109,7 +109,38 @@ Run on the `naijaautomart` database after Portfolio 1 (the Portfolio 2 data is o
 
 ## Evidence
 
-Each output file shows every step, which tab ran it, the time it ran, and the result. They were produced by running the scripts step by step from two separate database connections (Tab A and Tab B).
+### Screenshots from my own computer (pgAdmin 4, PostgreSQL 18, 13 October 2026)
+
+Each pgAdmin tab is one database connection, so **Tab A and Tab B are two separate users**. Note the query times in the waiting screenshots: they show how long a tab was blocked by the other tab's lock.
+
+**The key moments**
+
+![Tab B waited 1 min 6 s for Chinedu's lock, then saw the true stock: 0](evidence/screenshots/05d_for_update_tabB_waited_then_sees_0.png)
+*Fix 1: Aisha's `SELECT … FOR UPDATE` waited **1 min 6 s** for Chinedu's lock, then saw the true stock: **0**.*
+
+![Deadlock detected, SQL state 40P01](evidence/screenshots/08b_deadlock_detected_40P01.png)
+*Deadlock: PostgreSQL cancelled Aisha's transaction after about 1 second (SQL state 40P01).*
+
+| Script | Screenshot | What it shows |
+|---|---|---|
+| **01 Commit** | [01a](evidence/screenshots/01a_commit_before_stock.png) · [01b](evidence/screenshots/01b_commit_transaction.png) · [01c](evidence/screenshots/01c_commit_after_order_and_payment.png) | Stock 25 and 200 before; 4 changes committed together; order, items and ₦114,000 payment all saved |
+| **02 Rollback** | [02a](evidence/screenshots/02a_rollback_before.png) · [02b](evidence/screenshots/02b_rollback_changes_inside_transaction.png) · [02c](evidence/screenshots/02c_rollback_stock_14_inside.png) · [02d](evidence/screenshots/02d_rollback_executed.png) · [02e](evidence/screenshots/02e_rollback_after_nothing_saved.png) | Battery stock 15 → **14 inside** the transaction → `ROLLBACK` → back to **15**, order count unchanged (200,009) |
+| **02 Savepoint** | [02f](evidence/screenshots/02f_savepoint_order.png) · [02g](evidence/screenshots/02g_savepoint_one_item_kept.png) | Order saved with **1** item (the oil filter); the out-of-stock item was undone |
+| **03 place_order()** | [03a](evidence/screenshots/03a_place_order_function_create.png) · [03b](evidence/screenshots/03b_place_order_stock_check_last.png) · [03c](evidence/screenshots/03c_place_order_good_order.png) · [03d](evidence/screenshots/03d_place_order_bad_order_rolled_back.png) | Good order → new order 210013; bad order refused, orders 200,011 → 200,011 and payments 10 → 10 (fully rolled back) |
+| **04 Lost update (problem)** | [04a](evidence/screenshots/04a_lost_update_tabA_reads_1.png) · [04b](evidence/screenshots/04b_lost_update_tabB_also_reads_1.png) · [04c](evidence/screenshots/04c_lost_update_tabA_commits.png) · [04d](evidence/screenshots/04d_lost_update_tabB_commits.png) · [04e](evidence/screenshots/04e_lost_update_oversold_stock_0.png) | **Both tabs read 1**, both committed a sale; stock shows 0 but **2 headlamps were sold** |
+| **05 Fix 1: FOR UPDATE** | [05a](evidence/screenshots/05a_for_update_setup.png) · [05b](evidence/screenshots/05b_for_update_tabA_locks_row.png) · [05c](evidence/screenshots/05c_for_update_tabA_commits.png) · [05d](evidence/screenshots/05d_for_update_tabB_waited_then_sees_0.png) · [05e](evidence/screenshots/05e_for_update_tabB_rollback.png) · [05f](evidence/screenshots/05f_for_update_one_sale_only.png) | Tab B **waited 1 min 6 s**, then saw 0; only 1 sale |
+| **06 Fix 2: atomic update** | [06a](evidence/screenshots/06a_atomic_setup.png) · [06b](evidence/screenshots/06b_atomic_tabA_update_1.png) · [06c](evidence/screenshots/06c_atomic_tabA_commits.png) · [06d](evidence/screenshots/06d_atomic_tabB_waited_update_0.png) · [06e](evidence/screenshots/06e_atomic_tabB_rollback.png) | Tab A: `UPDATE 1`; Tab B **waited 29 s**, then `UPDATE 0` (sold out) |
+| **07 Isolation** | [07a](evidence/screenshots/07a_isolation_setup.png) · [07b](evidence/screenshots/07b_tabA_uncommitted_price_change.png) · [07c](evidence/screenshots/07c_tabB_no_dirty_read.png) · [07d](evidence/screenshots/07d_tabA_rollback.png) | No dirty read: Tab B never saw the uncommitted price of ₦1 |
+| | [07e](evidence/screenshots/07e_read_committed_first_read_95000.png) · [07f](evidence/screenshots/07f_tabB_raises_price_99000.png) · [07g](evidence/screenshots/07g_read_committed_second_read.png) | READ COMMITTED: first read ₦95,000, then the admin saves ₦99,000 |
+| | [07h](evidence/screenshots/07h_error_25001_isolation_after_query.png) | My mistake: error 25001, an isolation level set after a query had already run (see the reflection log) |
+| | [07i](evidence/screenshots/07i_repeatable_read_first_read_95000.png) · [07j](evidence/screenshots/07j_tabB_raises_price_again.png) · [07k](evidence/screenshots/07k_repeatable_read_still_95000.png) | REPEATABLE READ: still **₦95,000** after the admin changed it |
+| | [07l](evidence/screenshots/07l_error_40001_serialization.png) · [07m](evidence/screenshots/07m_rollback_after_40001.png) · [07n](evidence/screenshots/07n_price_restored.png) | Update refused: *could not serialize access due to concurrent update* (40001) |
+| **08 Deadlock** | [08a](evidence/screenshots/08a_deadlock_tabA_locks_part2.png) · [08b](evidence/screenshots/08b_deadlock_detected_40P01.png) · [08c](evidence/screenshots/08c_deadlock_details.png) · [08d](evidence/screenshots/08d_tabA_finished_after_deadlock.png) · [08e](evidence/screenshots/08e_tabB_rollback.png) | Deadlock detected (40P01), with the two processes waiting on each other; Tab A then finished |
+| **08 Lock-order fix** | [08f](evidence/screenshots/08f_lock_order_tabA_locks_both.png) · [08g](evidence/screenshots/08g_lock_order_tabB_waited_no_deadlock.png) · [08h](evidence/screenshots/08h_lock_order_tabB_finish.png) | Same baskets locked in `part_id` order: Tab B simply **waited 49.8 s**, no deadlock |
+
+### Text outputs from the test run
+
+Each file shows every step, which tab ran it, the time it ran, and the result.
 
 | File | Shows |
 |---|---|
