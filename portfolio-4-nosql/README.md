@@ -106,10 +106,10 @@ Data used together should be **embedded**, stored inside one document. Data that
 | 03 step 1 | 6 parts fit a 2015 Corolla: the same 6 as Portfolio 1's query Q2 |
 | 03 step 5 | First sale `modifiedCount: 1`, second `modifiedCount: 0`, stock ends at 0 |
 | 04 step 4 | Order totals ₦51,000, ₦95,000, ₦42,000, ₦480,000, ₦159,500, ₦260,000, ₦170,000, ₦147,000: the same as PostgreSQL |
-| 05 step 2 → 4 | Q1 changes from **COLLSCAN** reading all 30,008 orders to **IXSCAN** reading only customer 4521's orders |
+| 05 step 2 → 4 | Q1 changes from **COLLSCAN** reading all 30,008 orders to **IXSCAN** reading only customer 4521's orders (none in the Atlas run, so 0 documents read) |
 | 05 step 5 | 5 × PASSED |
 
-*How these were checked: the query logic of scripts 01–04 was tested with mingo, an in-memory MongoDB-compatible query engine, before running on Atlas. The real run on Atlas is the evidence below.*
+*How these were checked: the query logic of scripts 01–04 was tested with mingo, an in-memory MongoDB-compatible query engine, before running on Atlas. All of these results were then confirmed on Atlas: see the [Evidence](#evidence) below.*
 
 ---
 
@@ -145,4 +145,99 @@ Your Atlas connection string and password are **never** stored in these scripts 
 
 ## Evidence
 
-*Screenshots from MongoDB Compass connected to Atlas: to be added.*
+All five scripts were run step by step in the **mongosh** (MongoDB Shell) tab of **MongoDB Compass**, connected to my free **MongoDB Atlas** cluster (`atlas-z2bk50-shard-0 [primary]`, database `naijaautomart`) on 14 October 2026. All 34 screenshots are in [evidence/screenshots](evidence/screenshots/).
+
+### Key results from the real Atlas run
+
+| What was tested | Result on Atlas |
+|---|---|
+| Data loaded (02 step 6) | **5,000** customers, **2,000** parts, **8** cars, **30,008** orders |
+| Atomic stock update (03 step 5) | First sale `modifiedCount: 1`, second `modifiedCount: 0`: no overselling |
+| Create then delete (03 step 7) | `insertedId: 99999`, then `deletedCount: 1` |
+| Revenue by category, Sept 2026 (04 step 1) | Batteries top at ₦132,542,500 from 343 orders; Lighting lowest at ₦63,019,000 |
+| Spending by state (04 step 3) | Lagos first: ₦2,614,596,000 from 4,714 orders |
+| `$lookup` join (04 step 4) | Order 1 → Chinedu Okafor, Ikeja, ₦51,000 … order 8 → Kemi Oladipo, Benin City, ₦147,000: the same totals as PostgreSQL |
+| Parts per car model (04 step 5) | 2018 Toyota Camry has the most parts (404); 2015 Corolla has 396 |
+| Validation (05 step 5) | **5 × PASSED**: all bad documents rejected |
+
+### Indexes: before and after (05 steps 2 and 4)
+
+| Query | Before (no index) | After (with index) |
+|---|---|---|
+| Q1 orders of customer 4521, newest first | **SORT ← COLLSCAN**: read all **30,008** orders, 28 ms | **FETCH ← IXSCAN** (`customerId_1_orderDate_-1`): read **0** orders, 1 ms |
+| Q2 parts that fit a 2015 Corolla | **COLLSCAN**: read all **2,000** parts | **FETCH ← IXSCAN** (multikey index on `fitsModels`): read only the **396** matching parts |
+
+*Note on Q1:* in this run customer 4521 happened to have no orders, so the query returned 0. That actually makes the point clearly: without the index MongoDB still had to read all 30,008 orders to find that out; with the index it looked at the index once and read **no** documents at all. The sort step also disappeared, because the index already keeps each customer's orders in date order.
+
+**Before: full collection scan**
+
+![05 before: COLLSCAN](evidence/screenshots/05_step2_before_collscan.png)
+
+**After: index scan**
+
+![05 after: IXSCAN](evidence/screenshots/05_step4_after_ixscan.png)
+
+**Validation rules reject bad data**
+
+![05 validation: 5 passed](evidence/screenshots/05_step5_validation_5_passed.png)
+
+**Data loaded on Atlas**
+
+![02 counts](evidence/screenshots/02_step6_counts_5000_2000_8_30008.png)
+
+### All screenshots
+
+**Script 01: create collections with validation rules**
+
+| Screenshot | Shows |
+|---|---|
+| [01_step1_start_create_customers](evidence/screenshots/01_step1_start_create_customers.png) | Switching to the `naijaautomart` database and creating `customers` with `$jsonSchema` |
+| [01_parts_collection_created](evidence/screenshots/01_parts_collection_created.png) | `parts` collection created (`ok: 1`) |
+| [01_cars_collection_created](evidence/screenshots/01_cars_collection_created.png) | `cars` collection created |
+| [01_orders_collection_created](evidence/screenshots/01_orders_collection_created.png) | `orders` collection created |
+| [01_indexes_and_collection_list](evidence/screenshots/01_indexes_and_collection_list.png) | Unique indexes created and the 4 collection names listed |
+
+**Script 02: insert data**
+
+| Screenshot | Shows |
+|---|---|
+| [02_customers_insert_a](evidence/screenshots/02_customers_insert_a.png), [b](evidence/screenshots/02_customers_insert_b.png) | Portfolio 1 customers inserted |
+| [02_parts_insert_a](evidence/screenshots/02_parts_insert_a.png), [b](evidence/screenshots/02_parts_insert_b.png) | 15 parts inserted, each with its own attributes and `fitsModels` list |
+| [02_cars_insert_a](evidence/screenshots/02_cars_insert_a.png), [b](evidence/screenshots/02_cars_insert_b.png) | 8 cars inserted |
+| [02_orders_insert_a](evidence/screenshots/02_orders_insert_a.png), [b](evidence/screenshots/02_orders_insert_b.png) | 8 orders inserted, with items, payments and delivery embedded |
+| [02_step5_generate_data_code](evidence/screenshots/02_step5_generate_data_code.png) | Code that generates the larger test data |
+| [02_step5_batch_inserts](evidence/screenshots/02_step5_batch_inserts.png) | Generated data inserted in batches |
+| [02_step6_counts_5000_2000_8_30008](evidence/screenshots/02_step6_counts_5000_2000_8_30008.png) | Final counts: 5,000 / 2,000 / 8 / 30,008 |
+
+**Script 03: CRUD (Create, Read, Update, Delete)**
+
+| Screenshot | Shows |
+|---|---|
+| [03_q1_parts_for_2015_corolla](evidence/screenshots/03_q1_parts_for_2015_corolla.png) | Parts that fit a 2015 Corolla in one query, no joins |
+| [03_q2_16inch_tyre_attributes](evidence/screenshots/03_q2_16inch_tyre_attributes.png) | Searching inside the flexible `attributes` (16-inch tyre) |
+| [03_q3_cars_under_20m](evidence/screenshots/03_q3_cars_under_20m.png) | Cars under ₦20 million |
+| [03_q4_full_order_one_read](evidence/screenshots/03_q4_full_order_one_read.png) | Order 3 with its items, payments and delivery in one read |
+| [03_q5_atomic_update_1_then_0](evidence/screenshots/03_q5_atomic_update_1_then_0.png) | Atomic stock update: `modifiedCount` 1, then 0 |
+| [03_q6_review_push_capped](evidence/screenshots/03_q6_review_push_capped.png) | New review added and the list capped at 5 |
+| [03_q7_create_then_delete](evidence/screenshots/03_q7_create_then_delete.png) | A test customer inserted, then deleted |
+
+**Script 04: aggregation pipeline reports**
+
+| Screenshot | Shows |
+|---|---|
+| [04_step1_revenue_by_category](evidence/screenshots/04_step1_revenue_by_category.png) | Revenue by part category for September 2026 |
+| [04_step2_best_rated_parts](evidence/screenshots/04_step2_best_rated_parts.png) | Best-rated parts |
+| [04_step3_spending_by_state](evidence/screenshots/04_step3_spending_by_state.png) | Orders and money spent per state (top 5) |
+| [04_step4_lookup_orders_customers](evidence/screenshots/04_step4_lookup_orders_customers.png) | `$lookup` joining orders to customers |
+| [04_step5_models_with_most_parts](evidence/screenshots/04_step5_models_with_most_parts.png) | Car models with the most parts (`$unwind` on `fitsModels`) |
+
+**Script 05: indexes and validation**
+
+| Screenshot | Shows |
+|---|---|
+| [05_step1_explain_helper](evidence/screenshots/05_step1_explain_helper.png) | Small helper that prints the key `explain()` numbers |
+| [05_step2_before_collscan](evidence/screenshots/05_step2_before_collscan.png) | Before indexes: COLLSCAN |
+| [05_step3_create_indexes](evidence/screenshots/05_step3_create_indexes.png) | Compound index on orders and multikey index on parts |
+| [05_step4_after_ixscan](evidence/screenshots/05_step4_after_ixscan.png) | After indexes: IXSCAN |
+| [05_step5_validation_tests_code](evidence/screenshots/05_step5_validation_tests_code.png) | The 5 invalid inserts |
+| [05_step5_validation_5_passed](evidence/screenshots/05_step5_validation_5_passed.png) | All 5 rejected: PASSED |
