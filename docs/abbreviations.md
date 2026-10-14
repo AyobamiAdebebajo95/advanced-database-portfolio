@@ -35,6 +35,12 @@ Each abbreviation is also spelled out the first time it appears on each page. Th
 | **PL/pgSQL** | Procedural Language / PostgreSQL | The language used to write database functions such as `place_order()` |
 | **ms** | Millisecond | One thousandth of a second; used for query times |
 | **KB / MB** | Kilobyte / Megabyte | Units of storage size (1 MB = 1,024 KB); a database page is 8 KB |
+| **CRUD** | Create, Read, Update, Delete | The four basic things you do with data |
+| **JSON** | JavaScript Object Notation | A text format for data made of `{ "field": value }` pairs; MongoDB documents look like JSON |
+| **BSON** | Binary JSON | How MongoDB actually stores documents on disk (JSON plus extra types such as dates) |
+| **COLLSCAN / IXSCAN** | Collection Scan / Index Scan | MongoDB's versions of Seq Scan and Index Scan in a query plan |
+| **mongosh** | MongoDB Shell | The command line for MongoDB; built into Compass |
+| **Atlas** | MongoDB Atlas | MongoDB's cloud database service (used for Portfolios 4 and 5) |
 
 ## Cars and auto parts
 

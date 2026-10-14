@@ -52,6 +52,8 @@ pip install faker psycopg2-binary pymongo
 ```
 
 ## 6. MongoDB + Compass (before Portfolio 4)
+**What I used: MongoDB Atlas (cloud) + Compass.** Create a free **M0** cluster at https://cloud.mongodb.com, add a database user and your IP address (Network Access), then connect Compass with the `mongodb+srv://...` connection string. Nothing needs installing except Compass. The local install below is an alternative.
+
 1. Download **MongoDB Community Server** from **https://www.mongodb.com/try/download/community**
 2. Choose **Complete** setup, keep **"Install MongoDB as a Service"** ticked, and keep **"Install MongoDB Compass"** ticked.
 3. Open **MongoDB Compass** and click **Connect** (the default `mongodb://localhost:27017` is correct).
