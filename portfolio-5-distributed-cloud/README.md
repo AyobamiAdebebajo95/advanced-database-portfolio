@@ -1,5 +1,7 @@
 # Portfolio 5: Distributed and Cloud Database Exercise
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 This portfolio takes the NaijaAutoMart MongoDB database from Portfolio 4, now running in the cloud on **MongoDB Atlas**, and shows how it works as a **distributed** database. It covers replication, consistency, transactions, a sharding design and backup/restore. Every test runs on the real Atlas cluster.
 
 *Abbreviations are spelled out on first use. Full list: [abbreviations.md](../docs/abbreviations.md).*

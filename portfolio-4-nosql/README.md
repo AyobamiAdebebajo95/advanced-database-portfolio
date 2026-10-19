@@ -1,5 +1,7 @@
 # Portfolio 4: NoSQL and Advanced Data Models
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 This portfolio rebuilds the NaijaAutoMart catalogue, cars, customers and orders as a **document database** in **MongoDB Atlas** (MongoDB's cloud service). It then compares when documents work better than PostgreSQL's tables, and when they don't.
 
 *NoSQL = Not only SQL (Structured Query Language). Abbreviations are spelled out on first use. Full list: [abbreviations.md](../docs/abbreviations.md).*

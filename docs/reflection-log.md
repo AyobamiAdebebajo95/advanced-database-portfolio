@@ -1,5 +1,7 @@
 # Reflection Log
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 One short entry each week: what I decided, what went wrong, and what I learned.
 
 ## Week 1 – Setup and Portfolio 1: Database Design (6–7 Oct 2026)

@@ -1,6 +1,7 @@
 # Individual Technical Reflection
 
-**Adebajo Ayobamidele · Student ID 301931278 · MIT 8103 Advanced Database Systems**
+**Adebajo Ayobamidele · Student ID 301931278 · MIT 8103 Advanced Database Systems**  
+GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
 
 *Built from my weekly [reflection log](reflection-log.md). Abbreviations are explained in [abbreviations.md](abbreviations.md).*
 

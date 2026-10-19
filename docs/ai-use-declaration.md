@@ -1,6 +1,7 @@
 # AI Use Declaration
 
-**Adebajo Ayobamidele · Student ID 301931278 · MIT 8103 Advanced Database Systems**
+**Adebajo Ayobamidele · Student ID 301931278 · MIT 8103 Advanced Database Systems**  
+GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
 
 **1. AI tool used:** Claude (Anthropic), used through the Claude app between 6 and 19 October 2026.
 

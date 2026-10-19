@@ -1,5 +1,7 @@
 # Portfolio 1: Database Design and Modelling
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 This portfolio designs the relational database for **NaijaAutoMart**, a made-up Nigerian online store for cars and auto parts, and builds it in **PostgreSQL**. It was run on my own computer in PostgreSQL 18 with pgAdmin 4, and re-checked on PostgreSQL 16.
 
 *Abbreviations are spelled out on first use. Full list: [abbreviations.md](../docs/abbreviations.md).*

@@ -1,5 +1,7 @@
 # AI (Artificial Intelligence) Use Log
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 | Date | AI tool | What I used it for | How I checked it |
 |---|---|---|---|
 | 6 Oct 2026 | Claude (Anthropic) | Planning the 6-week schedule and setting up this repository's folders | Compared against the assessment brief |

@@ -1,5 +1,7 @@
 # Setup Guide (Windows)
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 *Abbreviations are explained in [abbreviations.md](abbreviations.md).*
 
 The tools needed for this portfolio, in the order you need them. Install the first six as needed. Docker turned out **not** to be needed: Portfolio 5 uses the MongoDB Atlas cloud cluster from Portfolio 4.

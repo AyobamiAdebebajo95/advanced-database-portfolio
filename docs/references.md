@@ -1,5 +1,7 @@
 # References
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 - PostgreSQL Documentation – https://www.postgresql.org/docs/
 - MongoDB Documentation – https://www.mongodb.com/docs/
 - MongoDB Manual: Replication – https://www.mongodb.com/docs/manual/replication/

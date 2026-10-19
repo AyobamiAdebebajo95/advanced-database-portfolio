@@ -1,5 +1,7 @@
 # Portfolio 2: Query Processing and Optimisation
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 This portfolio takes five real NaijaAutoMart business queries, measures how PostgreSQL runs them on a large amount of data, and makes them faster with indexes and a materialized view. It also measures the cost of those indexes.
 
 *Abbreviations are spelled out on first use. Full list: [abbreviations.md](../docs/abbreviations.md).*

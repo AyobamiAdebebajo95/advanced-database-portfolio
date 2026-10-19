@@ -1,5 +1,7 @@
 # Abbreviations Used in This Portfolio
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 Each abbreviation is also spelled out the first time it appears on each page. This list grows as new portfolios are added.
 
 ## Course and general

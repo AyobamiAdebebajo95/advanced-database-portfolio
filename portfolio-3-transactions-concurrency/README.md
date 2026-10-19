@@ -1,5 +1,7 @@
 # Portfolio 3: Transactions and Concurrency
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 This portfolio shows how NaijaAutoMart keeps its data correct when an order touches several tables at once, and when many customers shop **at the same time**. The main example is two customers trying to buy the **last headlamp** at the same moment.
 
 *Abbreviations are spelled out on first use. Full list: [abbreviations.md](../docs/abbreviations.md).*

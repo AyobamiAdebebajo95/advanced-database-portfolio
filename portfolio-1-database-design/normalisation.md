@@ -1,5 +1,7 @@
 # Normalisation: from an order form to clean tables
 
+**Adebajo Ayobamidele** · Student ID 301931278 · GitHub: [github.com/AyobamiAdebebajo95/advanced-database-portfolio](https://github.com/AyobamiAdebebajo95/advanced-database-portfolio)
+
 *Abbreviations: UNF = Unnormalised Form, 1NF/2NF/3NF = First/Second/Third Normal Form, BCNF = Boyce-Codd Normal Form, PK = Primary Key, FK = Foreign Key. Full list: [abbreviations.md](../docs/abbreviations.md).*
 
 **Normalisation** means organising data so each fact is stored in **one place only**. That stops three problems:
