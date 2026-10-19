@@ -1,0 +1,13 @@
+flowchart TB
+    U["Customers, sellers,<br/>delivery agents<br/>(Lagos, Kano, Abuja...)"] --> APP["NaijaAutoMart<br/>website / app"]
+    APP -- "writes + strong reads<br/>(orders, stock)" --> P
+    APP -. "catalogue reads<br/>(readPreference secondary)" .-> S1
+    subgraph ATLAS["MongoDB Atlas cloud - replica set atlas-z2bk50-shard-0 (free M0 tier)"]
+        P[("PRIMARY<br/>takes all writes")]
+        S1[("SECONDARY 1<br/>copy of the data")]
+        S2[("SECONDARY 2<br/>copy of the data")]
+        P -- "replication (oplog)" --> S1
+        P -- "replication (oplog)" --> S2
+        S1 <-. "heartbeats + election<br/>if the primary fails" .-> S2
+    end
+    APP -- "payments, finance<br/>(Portfolios 1-3)" --> PG[("PostgreSQL")]

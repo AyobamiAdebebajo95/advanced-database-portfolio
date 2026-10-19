@@ -2,7 +2,7 @@
 
 *Abbreviations are explained in [abbreviations.md](abbreviations.md).*
 
-The tools needed for this portfolio, in the order you need them. Install the first five this week. Docker is only needed for Portfolio 5, so it can wait.
+The tools needed for this portfolio, in the order you need them. Install the first six as needed. Docker turned out **not** to be needed: Portfolio 5 uses the MongoDB Atlas cloud cluster from Portfolio 4.
 
 | # | Tool | Needed for | When |
 |---|---|---|---|
@@ -11,8 +11,8 @@ The tools needed for this portfolio, in the order you need them. Install the fir
 | 3 | PostgreSQL + pgAdmin (PostgreSQL Administration tool) | Portfolios 1, 2, 3, 5 | Now |
 | 4 | draw.io | ER (Entity-Relationship) diagram | Now |
 | 5 | Python | Creating test data | Before Portfolio 2 |
-| 6 | MongoDB + Compass | Portfolio 4 | Before Portfolio 4 |
-| 7 | Docker Desktop | Portfolio 5 | Before Portfolio 5 |
+| 6 | MongoDB Atlas + Compass | Portfolios 4 and 5 | Before Portfolio 4 |
+| 7 | Docker Desktop | Not needed (optional extra) | Skip |
 
 ---
 
@@ -58,7 +58,9 @@ pip install faker psycopg2-binary pymongo
 2. Choose **Complete** setup, keep **"Install MongoDB as a Service"** ticked, and keep **"Install MongoDB Compass"** ticked.
 3. Open **MongoDB Compass** and click **Connect** (the default `mongodb://localhost:27017` is correct).
 
-## 7. Docker Desktop (before Portfolio 5)
+## 7. Docker Desktop (optional, not used)
+*Not needed: Portfolio 5 runs on the Atlas replica set. Kept here only in case you want to run servers locally.*
+
 1. Download from **https://www.docker.com/products/docker-desktop/**
 2. Install with the defaults (it uses WSL 2, the Windows Subsystem for Linux; let it install that if asked) and restart your PC (Personal Computer).
 3. Open Docker Desktop and wait until it says **Engine running**.

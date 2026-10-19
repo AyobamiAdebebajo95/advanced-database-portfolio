@@ -1,0 +1,15 @@
+flowchart TB
+    APP["NaijaAutoMart app"] --> R["mongos router<br/>(knows which shard holds which customerIds)"]
+    CFG[("Config servers<br/>(the shard map)")] --- R
+    R -- "hash(customerId) in range 1" --> A
+    R -- "hash(customerId) in range 2" --> B
+    R -- "hash(customerId) in range 3" --> C
+    subgraph A["Shard A - its own 3-node replica set"]
+        A1[("Primary")] --> A2[("Secondary")] & A3[("Secondary")]
+    end
+    subgraph B["Shard B - its own 3-node replica set"]
+        B1[("Primary")] --> B2[("Secondary")] & B3[("Secondary")]
+    end
+    subgraph C["Shard C - its own 3-node replica set"]
+        C1[("Primary")] --> C2[("Secondary")] & C3[("Secondary")]
+    end

@@ -32,12 +32,12 @@ MIVA Open University · Master of Information Technology · 2026/2027 First Seme
 | [Portfolio 2](portfolio-2-query-optimisation/) | Query Processing and Optimisation | 7 | Done |
 | [Portfolio 3](portfolio-3-transactions-concurrency/) | Transactions and Concurrency | 7 | Done |
 | [Portfolio 4](portfolio-4-nosql/) | NoSQL (Not only SQL) and Advanced Data Models | 7 | Done |
-| [Portfolio 5](portfolio-5-distributed-cloud/) | Distributed and Cloud Database Exercise | 6 | Not started |
+| [Portfolio 5](portfolio-5-distributed-cloud/) | Distributed and Cloud Database Exercise | 6 | Scripts ready; Atlas evidence pending |
 | [Final Documentation](docs/) | Portfolio documentation and technical reflection | 6 | Not started |
 | **Total** | | **40** | |
 
 ## Tools
-PostgreSQL, MongoDB Atlas + Compass, Docker, Python, draw.io
+PostgreSQL, MongoDB Atlas (cloud replica set) + Compass, Python, Mermaid (diagrams)
 
 ## Notes
 Each folder has its own README explaining what was done and how to run it. Setup steps are in [docs/setup-guide.md](docs/setup-guide.md). Sources are listed in [docs/references.md](docs/references.md) and AI (Artificial Intelligence) use in [docs/ai-use-log.md](docs/ai-use-log.md).

@@ -13,6 +13,8 @@ Each abbreviation is also spelled out the first time it appears on each page. Th
 | **ID** | Identifier: a number or code that uniquely identifies a record |
 | **PC** | Personal Computer |
 | **FCT** | Federal Capital Territory (Abuja) |
+| **IP** | Internet Protocol: an IP address identifies a computer on the internet |
+| **GPS** | Global Positioning System |
 
 ## Databases
 
@@ -41,6 +43,13 @@ Each abbreviation is also spelled out the first time it appears on each page. Th
 | **COLLSCAN / IXSCAN** | Collection Scan / Index Scan | MongoDB's versions of Seq Scan and Index Scan in a query plan |
 | **mongosh** | MongoDB Shell | The command line for MongoDB; built into Compass |
 | **Atlas** | MongoDB Atlas | MongoDB's cloud database service (used for Portfolios 4 and 5) |
+| **DBaaS** | Database as a Service | A cloud provider runs the database servers; you only connect to them (e.g. Atlas) |
+| **M0 / M10 / M30** | Atlas cluster tiers | M0 is the free tier; M10 and above can test failover; M30 and above can be sharded |
+| **oplog** | Operation log | The list of every change on the primary, which the secondaries copy (replication) |
+| **mongos** | MongoDB Shard router | Sends each query to the shard(s) that hold the data |
+| **CAP** | Consistency, Availability, Partition tolerance | When the network splits, a distributed database must choose between consistency and availability |
+| **RPO** | Recovery Point Objective | How much data the business can afford to lose |
+| **RTO** | Recovery Time Objective | How long the business can afford to be down |
 
 ## Cars and auto parts
 
@@ -58,5 +67,5 @@ Each abbreviation is also spelled out the first time it appears on each page. Th
 | **pgAdmin** | PostgreSQL Administration tool: the graphical app for managing PostgreSQL |
 | **psql** | PostgreSQL's command-line tool |
 | **VS Code** | Visual Studio Code: a free code editor |
-| **WSL** | Windows Subsystem for Linux: lets Windows run Linux tools (needed by Docker) |
+| **WSL** | Windows Subsystem for Linux: lets Windows run Linux tools (used by Docker, which this portfolio did not need) |
 | **PNG** | Portable Network Graphics: an image file format |
