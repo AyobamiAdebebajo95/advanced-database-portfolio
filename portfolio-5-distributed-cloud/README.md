@@ -164,7 +164,7 @@ The free tier cannot be sharded (Atlas needs a paid M30 or larger cluster), so s
 
 ## Evidence
 
-All scripts were run in the mongosh shell of **MongoDB Compass**, connected to the Atlas cluster, on 19 October 2026. The Atlas screenshots were taken on the Atlas website. IP addresses are blurred, and the password never appears. All 33 screenshots are in [evidence/screenshots](evidence/screenshots/).
+All scripts were run in the mongosh shell of **MongoDB Compass**, connected to the Atlas cluster, on 19 October 2026. The Atlas screenshots were taken on the Atlas website. IP addresses are blurred, and the password never appears. All 35 screenshots are in [evidence/screenshots](evidence/screenshots/).
 
 ### Key results
 
@@ -178,7 +178,7 @@ All scripts were run in the mongosh shell of **MongoDB Compass**, connected to t
 | Stale reads (02 steps 4–5) | 0/100 without a guarantee; 0/100 **guaranteed** with a causal session |
 | Transaction (03) | 1 commit, 2 rollbacks; battery stock ends at 23 in every case it should |
 | Sharding simulation (04) | State: Lagos 17.7%. Date: 100% of new orders on one shard. Hashed `customerId`: 9,591 / 10,001 / 10,417 |
-| Backup (05) | Before: 2,000 parts, 192,659 stock units. Exported to JSON, then all 2,000 deleted. *Restore check: see the note below* |
+| Backup and restore (05) | Before: 2,000 parts, 192,659 stock units, battery stock 23, 396 Corolla parts. Exported to JSON, all 2,000 deleted, then imported: **2,000 / 192,659 / 23 / 396**, an exact match |
 
 **The cluster on Atlas: 3 nodes, 1 primary and 2 secondaries, in Cape Town**
 
@@ -256,4 +256,11 @@ All scripts were run in the mongosh shell of **MongoDB Compass**, connected to t
 | [05_step3_delete_all_parts](evidence/screenshots/05_step3_delete_all_parts.png) | "Disaster": all 2,000 parts deleted |
 | [05_step4_choose_backup_file](evidence/screenshots/05_step4_choose_backup_file.png), [import dialog](evidence/screenshots/05_step4_import_dialog.png) | Restore: importing `naijaautomart.parts.json` |
 
-*Restore check (step 5): to be added. In the first run, step 5 was pasted before the import had finished, so it still showed 0 parts.*
+| [05_step4_import_completed_2000](evidence/screenshots/05_step4_import_completed_2000.png) | Compass: "Import completed. 2000 documents imported." |
+| [05_step5_restore_check_all_match](evidence/screenshots/05_step5_restore_check_all_match.png) | After the restore: 2,000 parts, 192,659 stock units, battery stock 23, 396 Corolla parts, matching step 1 exactly |
+
+*Lesson learned:* the first time, I pasted step 5 before the Compass import had finished, and it showed 0 parts. A restore is only done when the tool confirms it ("2000 documents imported"), so the check must wait for that message.
+
+**Restore check: every number matches the backup**
+
+![Restore check](evidence/screenshots/05_step5_restore_check_all_match.png)
