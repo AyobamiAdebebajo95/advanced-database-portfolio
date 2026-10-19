@@ -6,7 +6,7 @@ This portfolio designs the relational database for **NaijaAutoMart**, a made-up 
 
 | Required by the brief | Where to find it |
 |---|---|
-| Chosen case study description | [Main README](../README.md#my-case-study-naijaautomart-online-store) and the summary below |
+| Chosen case study description | [Main README](../README.md#1-selected-case-study-naijaautomart-online-store) and the summary below |
 | ER (Entity-Relationship) diagram | [er-diagram.png](er-diagram.png) (shown below) |
 | Relational schema | [Relational schema](#relational-schema) below, and [01_create_tables.sql](scripts/01_create_tables.sql) |
 | Keys | [Keys and constraints](#keys-and-constraints) below |
