@@ -17,15 +17,13 @@ Two choices changed how I think about design:
 - **Different versions behave differently (Portfolio 1).** Test 5 did not print PASSED on my PostgreSQL 18. It reported the blocked delete as `restrict_violation` (23001), while the test expected `foreign_key_violation` (23503). The fix was to accept both errors.
 - **Never assume ID numbers (Portfolio 2).** My data script failed with a foreign key error because a failed insert in the Portfolio 1 tests had used up seller ID 7. I changed the script to look up real IDs instead of assuming them.
 - **Not every index helps (Portfolio 2).** The composite index made the customer order-history query about 270× faster on my PC, but the monthly report did not improve until I used a materialized view. The indexes also made bulk inserts about 35% slower.
-- **Transactions must start cleanly (Portfolio 3).** Error 25001 appeared because I set an isolation level after a query had already started a transaction in that tab. I learned that pgAdmin's Auto commit setting decides when a transaction begins.
-- **Locks are real waits (Portfolio 3).** One tab waited 1 minute 6 seconds for the other tab's lock before it could see the true stock of 0. Seeing that explained the lost update problem better than any definition.
-- **Results can surprise you (Portfolio 4).** Customer 4521 had no orders, yet without an index MongoDB still read all 30,008 orders to find that out. With the index, it read none.
-- **Cloud limits (Portfolio 5).** The free Atlas tier cannot trigger a failover or be sharded, so I simulated sharding on my real data. A `w: 5` write was refused but still saved, which taught me that a write concern error does not undo a write.
-- **Wait for confirmation (Portfolio 5).** My first restore check showed 0 parts because I ran it before the import had finished. A restore is only finished when the tool confirms it.
+- **Portfolio 3 (transactions and concurrency).** At first I thought error 25001 was a syntax error, but I realised that pgAdmin's Auto commit setting decides when a transaction starts, and it can cause an error if I don't take it into account. Seeing a lock in action showed me that one transaction can be held back until another one finishes. In the lost update test, the system could not tell that another transaction had already sold the last headlamp, so it was sold twice, but this was easy to fix. Where possible, I would use the one-step `UPDATE … WHERE` fix, because it is simple.
+- **Portfolio 4 (NoSQL).** A syntax error happens when part of the JavaScript script is not pasted in full. I also realised that, without an index, MongoDB reads through every record to find what it needs (a COLLSCAN), just like a Seq Scan in PostgreSQL. This uses a lot of resources, and an index fixes it in both databases. A weakness I noticed is that seller and customer names copied into other documents can go out of date.
+- **Portfolio 5 (distributed and cloud).** Because my free cluster is hosted in Cape Town, the distance from Nigeria affected the speed of every request, and also the speed of exporting and importing. I think payments and stock need strong consistency, but the catalogue needs less consistency.
 
 ## Lessons learned
 
 1. **Prove it with evidence.** "It became faster" means nothing without a before-and-after plan and a time.
-2. **Every speed-up has a cost:** indexes slow down writes, materialized views go stale, and safer write concerns wait longer.
+2. **Every speed-up has a cost:** indexes slow down writes, materialized views go stale, and safer write concerns can wait longer.
 3. **Read the error message and find the real cause before changing code.** Most of my problems came from my environment, not from the logic.
 4. **Use one case study throughout.** It made it easy to compare relational, document and distributed designs on the same data.

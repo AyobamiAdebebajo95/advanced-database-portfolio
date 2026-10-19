@@ -24,3 +24,18 @@ For query optimisation, I am looking forward to running queries that would make 
 
 **Problem I faced and what I learned?**
 When the Portfolio 2 data script failed, my first thought was that it was a primary key issue caused by conflicting data. After a few minutes of reflection, I realised the real cause was how rows had been inserted earlier: a failed insert in my Portfolio 1 tests had used up seller ID 7, so seller 7 never existed and the foreign key on the part table stopped my script from running. Going forward, I will test my scripts to make sure they do not assume ID numbers, so there are no ID collisions.
+
+## Week 3 – Portfolio 3: Transactions and Concurrency (13 Oct 2026)
+
+**Problem I faced and what I learned?**
+At first I thought error 25001 was a syntax error, but I realised that pgAdmin's Auto commit setting decides when a transaction starts, and it can cause an error if I don't take it into account. Seeing a lock in action showed me that one transaction can be held back until another one finishes. In the lost update test, the system could not tell that another transaction had already sold the last headlamp, so it was sold twice, but this was easy to fix. Where possible, I would use the one-step `UPDATE … WHERE` fix, because it is simple.
+
+## Week 4 – Portfolio 4: NoSQL and Advanced Data Models (14 Oct 2026)
+
+**Problem I faced and what I learned?**
+A syntax error happens when part of the JavaScript script is not pasted in full. I also realised that, without an index, MongoDB reads through every record to find what it needs (a COLLSCAN), just like a Seq Scan in PostgreSQL. This uses a lot of resources, and an index fixes it in both databases. A weakness I noticed is that seller and customer names copied into other documents can go out of date.
+
+## Week 5 – Portfolio 5: Distributed and Cloud Database (19 Oct 2026)
+
+**Problem I faced and what I learned?**
+Because my free cluster is hosted in Cape Town, the distance from Nigeria affected the speed of every request, and also the speed of exporting and importing. I think payments and stock need strong consistency, but the catalogue needs less consistency.
