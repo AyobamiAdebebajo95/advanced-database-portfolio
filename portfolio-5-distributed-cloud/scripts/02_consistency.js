@@ -35,6 +35,8 @@ printjson([ timeInserts('w: 1', { w: 1 }, 100),
 
 // STEP 3: ask for MORE copies than exist. There are only 3 nodes, so w: 5 can never be met.
 // MongoDB refuses instead of waiting forever. This shows w really counts servers.
+// Note: the error is about the CONFIRMATION, not the write - the primary still saved
+// the document (step 6 counts it). A write concern error is a warning, not a rollback.
 try {
   db.deliveryEvents.insertOne({ test: 'w: 5' }, { writeConcern: { w: 5, wtimeout: 3000 } });
   print('accepted (unexpected)');

@@ -23,8 +23,8 @@ printjson({ replicaSet: h.setName, members: h.hosts, currentPrimary: h.primary,
             mongodbVersion: db.version() });
 
 // STEP 2: the full replica set status (rs.status)
-// On the FREE M0 tier Atlas blocks this admin command, so the error message
-// itself is evidence of a free-tier limit (see the README). On a paid tier it lists each node.
+// Lists each node and its role. (Atlas documents some admin commands as limited on the
+// free M0 tier, so the catch prints the error if it is blocked. On my cluster it worked.)
 try {
   var st = rs.status();
   printjson(st.members.map(function (m) { return { node: m.name, role: m.stateStr, healthy: m.health === 1 }; }));
